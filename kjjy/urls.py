@@ -53,15 +53,23 @@ def login(request):
 
 from common.auth import cookie_auth
 @cookie_auth
-def back(request):
+def back_data(request):
     context = {}
     context["username"] = request.COOKIES.get("username")
-    return render(request, 'back/admin.html', context)
+    return render(request, 'back/admin_data.html', context)
+
+def back_venue(request):
+    pass
+
+def back_user(request):
+    pass
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login, name='login'),
-    path('back/', back, name='back'),
+    path('back/data/', back_data, name='back_data'),
+    path('back/venue/', back_venue, name='back_venue'),
+    path('back/user/', back_user, name='back_user'),
     path('venue/', include('venue.urls'))
 ]
 
