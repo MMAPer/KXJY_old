@@ -9,18 +9,18 @@
         <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2.min.css' %}">
     {% endblock %}
 
-    {%block div_id %}admin_data{% endblock %}
+    {%block div_id %}admin_venue_label{% endblock %}
 
 
     {% block content %}
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                数据管理
+                数据类别名称管理
                 <small>
                     <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px">
                         {#                    <span class="glyphicon glyphicon-ok">&nbsp;</span>#}
-                        添加数据
+                        添加数据类别
                     </button>
                 </small>
             </h1>
@@ -28,31 +28,12 @@
 
         <!-- Main content -->
         <section class="content container-fluid">
-            <div class="row">
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label>类别名称</label>
-                        <select class="form-control select2" style="width:90%;" v-model="selectLabelName">
-                            <option v-for="label in labelName" :value="label" style="text-align: center;" v-cloak>[[ label ]]</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label>场馆名称</label>
-                        <select class="form-control select2 select2-hidden-accessible" style="width:90%;" tabindex="-1"
-                                aria-hidden="true" v-model="selectItemName">
-                            <option v-for="item in itemName[0]" :value="item">[[ item ]]</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
             <div>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         <div class="box box-info">
                             <div class="box-header with-border">
-                                <h3 class="box-title" id="table-title">[[selectLabelName]]-[[selectItemName]]</h3>
+                                <h3 class="box-title" id="table-title">数据类别名称管理</h3>
                             </div>
                             <div class="box-body">
                                 <div class="table-responsive">
@@ -60,9 +41,19 @@
                                            style="word-break:break-all; word-wrap:break-all;table-layout:fixed">
                                         <thead>
                                             <tr>
-                                                <th style="width:200px; text-align:center;">操作</th><th>序号</th><th>展品/活动名称</th><th>基本内容</th><th>展厅名称</th>
+                                                <th style="width:10%">序号</th>
+                                                <th>数据类别名称</th>
+                                                <th style="width:200px; text-align:center;">操作</th>
                                             </tr>
                                         </thead>
+                                        <tbody>
+                                            <tr class="text-center" v-for="label,index in labelName">
+                                                <td><span>[[ index+1 ]]</span></td>
+                                                <td><span>[[ label.name ]]</span></td>
+                                                <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
+                                                    <button class="btn btn-danger">删除</button></td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -76,40 +67,28 @@
         </section>
         <!-- /.content -->
     {% endblock %}
-</div>
-</body>
+
 {% block end_script %}
 <script>
-    $(function(){
-        //Initialize Select2 Elements
-        $(".select2").select2();
-    });
-    let admin_data = new Vue({
-        el:"#admin_data",
+    let admin_venue_label = new Vue({
+        el:"#admin_venue_label",
         delimiters: ["[[", "]]"],
         data(){
             return {
-                menu_data_active: true,
-                menu_venue_active: false,
+                menu_data_active: false,
+                menu_venue_active: true,
                 menu_user_active: false,
-                venue: "",
-                labelName: [],
-                itemName: [],
-                selectLabelName: "",
-                selectItemName: "",
+                menu_venue_label_active: true,
+                menu_venue_item_active: false,
+                labelName: []
             }
         },
         mounted(){
-            axios.get("/venue").then(response=>{
-                data = response.data.data;
-                this.venue = data;
-                data.forEach((label, index)=>{
-                    this.labelName.push(label["name"]);
-                    this.itemName.push(label["items"]);
-                });
-                this.selectLabelName = this.labelName[0];
-                this.selectItemName = this.itemName[0][0];
-            })
+            axios.get("/venue/label").then(
+                response=>{
+                    this.labelName = response.data.data;
+                }
+            )
         }
     });
 </script>

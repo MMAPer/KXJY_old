@@ -97,7 +97,7 @@
                 <!-- Optionally, you can add icons to the links -->
                 <li class="" :class="{'active': menu_data_active}"><a href="/back/data/"><i class="fa fa-link"></i> <span>数据管理</span></a></li>
                 <li class="treeview" :class="{'active': menu_venue_active}">
-                    <a href="/back/venue/">
+                    <a href="#">
                         <i class="fa fa-link"></i>
                         <span>类别管理</span>
                         <span class="pull-right-container">
@@ -105,8 +105,8 @@
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="#">类别名称</a></li>
-                        <li><a href="#">包含场馆</a></li>
+                        <li :class="{'active': menu_venue_label_active}"><a href="/back/venue/类别名称">类别名称</a></li>
+                        <li :class="{'active': menu_venue_item_active}"><a href="/back/venue/包含场馆">包含场馆</a></li>
                     </ul>
                 </li>
                 <li :class="{'active': menu_user_active}"><a href="/back/user/"><i class="fa fa-link"></i> <span>用户管理</span></a></li>

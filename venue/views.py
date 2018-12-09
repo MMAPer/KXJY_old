@@ -61,4 +61,3 @@ def addVenueByLabel(request, label_name):
 
 #  删除指定一级目录下的二级目录
 
-

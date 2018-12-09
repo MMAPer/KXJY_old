@@ -23,7 +23,16 @@
         var s = document.getElementsByTagName("script")[0];
         s.parentNode.insertBefore(hm, s);
     })();
-    </script></head>
+    </script>
+    <style>
+        .log2-wr{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+    </style>
+</head>
 
 <body>
     <div id="app">
@@ -99,7 +108,7 @@
                     }).then(response=>{
                         if(response.data.code==20000)
                         {
-                            window.location.href = '/back';
+                            window.location.href = '/back/data';
                         } else {
                             alert("用户名或密码错误");
                         }

@@ -1,13 +1,6 @@
 {% extends 'back/admin_base.html' %}
 {% load staticfiles %}
 
-    {% block extra_script %}
-        <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
-    {% endblock %}
-
-    {% block extra_css  %}
-        <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2.min.css' %}">
-    {% endblock %}
 
     {%block div_id %}admin_data{% endblock %}
 
@@ -32,7 +25,7 @@
                 <div class="col-md-5">
                     <div class="form-group">
                         <label>类别名称</label>
-                        <select class="form-control select2" style="width:90%;" v-model="selectLabelName">
+                        <select class="form-control" style="width:90%;" v-model="selectLabelName" @change="changeLabelName">
                             <option v-for="label in labelName" :value="label" style="text-align: center;" v-cloak>[[ label ]]</option>
                         </select>
                     </div>
@@ -40,9 +33,9 @@
                 <div class="col-md-5">
                     <div class="form-group">
                         <label>场馆名称</label>
-                        <select class="form-control select2 select2-hidden-accessible" style="width:90%;" tabindex="-1"
-                                aria-hidden="true" v-model="selectItemName">
-                            <option v-for="item in itemName[0]" :value="item">[[ item ]]</option>
+                        <select class="form-control" style="width:90%;" tabindex="-1"
+                                aria-hidden="true" v-model="selectItemName" @change="changeItemName">
+                            <option v-for="item in showItemName" :value="item">[[ item ]]</option>
                         </select>
                     </div>
                 </div>
@@ -60,9 +53,29 @@
                                            style="word-break:break-all; word-wrap:break-all;table-layout:fixed">
                                         <thead>
                                             <tr>
-                                                <th style="width:200px; text-align:center;">操作</th><th>序号</th><th>展品/活动名称</th><th>基本内容</th><th>展厅名称</th>
+                                                <th style="width: 5%">序号</th>
+                                                <th>展品/活动名称</th>
+                                                <th>基本内容</th>
+                                                <th>展品类别</th>
+                                                <th>展陈分类</th>
+                                                <th>展品技术</th>
+                                                <th style="width: 10%">展厅名称</th>
+                                                <th style="width:200px; text-align:center;">操作</th>
                                             </tr>
                                         </thead>
+                                        <tbody>
+                                            <tr class="text-center" v-for="(data,index) in datas">
+                                                <td>[[ index+1 ]]</td>
+                                                <td>[[ data.data.name ]]</td>
+                                                <td>[[ data.data.content ]]</td>
+                                                <td>[[ data.data.exhibit_class ]]</td>
+                                                <td>[[ data.data.content ]]</td>
+                                                <td>[[ data.data.exhibition_class ]]</td>
+                                                <td>[[ data.data.exhibit_tech ]]</td>
+                                                <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
+                                                    <button class="btn btn-danger">删除</button></td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -71,6 +84,9 @@
                     <!--------------------------
                       | Your Page Content Here |
                       -------------------------->
+                    <div id="page" class="form-group">
+                       <my-component v-on:showPage="getPageData" v-bind:pagerData="pagerData"></my-component>
+                    </div>
                 </div>
             </div>
         </section>
@@ -80,10 +96,94 @@
 
 {% block end_script %}
 <script>
-    $(function(){
-        //Initialize Select2 Elements
-        $(".select2").select2();
-    });
+let pager = {
+    props: {
+        pagerData:{
+            type: Object,
+            default:function(){
+                return{
+                    data:[],
+                    page:{
+                        //分页大小
+                        pageSize:10,
+                        //分页数
+                        arrPageSize:[10,20,30,40],
+                        //当前页面
+                        pageCurrent:1,
+                        //总分页数
+                        pageCount:1,
+                        //总数
+                        totalCount:10
+                    }
+                }
+            }
+
+        }
+    },
+    template: '<div class="pager" id="pager">\
+                    <span class="form-inline">\
+                        <select class="form-control" v-model="pageSize" v-on:change="showPage(pageCurrent,$event)" number>\
+                            <option v-for="item in pagerData.page.arrPageSize" value="{{item}}">{{item}}</option>\
+                        </select>\
+                    </span>\
+                    <span class="btn btn-default" v-on:click="showPage(1,$event)">首页</span>\
+                    <span class="btn btn-default" v-on:click="showPage(pageCurrent-1,$event)">上一页</span>\
+                    <span class="form-inline">\
+                    <input class="form-control" style="width:60px;text-align:center" type="text" v-model="pageCurrent" v-on:keyup.enter="showPage(mypageCurrent,$event,true)" />\
+                    </span>\
+                    <span>共{{pagerData.page.pageCount}}页</span>\
+                    <span class="btn btn-default" v-on:click="showPage(pageCurrent+1,$event)">下一页</span>\
+                    <span class="btn btn-default" v-on:click="showPage(pagerData.page.pageCount,$event)">尾页</span>\
+                    <span>共{{pagerData.page.totalCount}}条数据，当前显示第{{startData}}-{{endData}}条记录</span>\
+                </div>',
+    data:function(){
+        return{
+            mypagesize:10,
+            mypageCurrent:1,
+            sortparam:"",
+            sorttype:1,
+        }
+    },
+    //计算属性
+    computed:{
+        // 分页大小 获取的时候显示父级传入的，修改的时候修改自身的。子组件不能修改父元素的值
+        pageSize:{
+            get:function(){
+                return this.pagerData.page.pageSize;
+            },
+            set:function(value){
+                this.mypagesize = value;
+            }
+        },
+        pageCurrent:{
+            get:function(){
+                return this.pagerData.page.pageCurrent;
+            },
+            set:function(value){
+                this.mypageCurrent = value;
+            }
+        },
+        startData:function(){
+            return this.pagerData.page.pageSize*(this.pagerData.page.pageCurrent-1)+1;
+        },
+        endData:function(){
+            let max =this.pagerData.page.pageSize*this.pagerData.page.pageCurrent;
+            return max>this.pagerData.page.totalCount?this.pagerData.page.totalCount:max;
+        }
+    },
+    methods:{
+        showPage: function (pageIndex, $event) {
+                    if (pageIndex > 0) {
+                        if(pageIndex>this.pagerData.page.pageCount) pageIndex = this.page.pageCount;
+                        this.$emit('show-page',{pageCurrent:pageIndex,pageSize:this.mypagesize});//事件
+                    }
+                },
+        sortBy: function (sortparam) {
+                    this.sortparam = sortparam;
+                    this.sorttype = this.sorttype == -1 ? 1 : -1;
+                }
+    }
+};
     let admin_data = new Vue({
         el:"#admin_data",
         delimiters: ["[[", "]]"],
@@ -92,24 +192,75 @@
                 menu_data_active: true,
                 menu_venue_active: false,
                 menu_user_active: false,
-                venue: "",
+                menu_venue_label_active: false,
+                menu_venue_item_active: false,
+                venues: "",
                 labelName: [],
                 itemName: [],
+                showItemName: [],
                 selectLabelName: "",
                 selectItemName: "",
+                datas: "",
+                pagerData: {
+                    data: [],
+                    page: {
+                        arrPageSize: [10, 20, 30, 40],
+                        pageSize: 10,
+                        pageCount: 1,
+                        pageCurrent: 1,
+                        totalCount: 1
+                    }
+                }
             }
         },
+        components: {
+            'my-component': pager
+        },
         mounted(){
-            axios.get("/venue").then(response=>{
-                data = response.data.data;
-                this.venue = data;
-                data.forEach((label, index)=>{
-                    this.labelName.push(label["name"]);
-                    this.itemName.push(label["items"]);
+            axios.all([axios.get("/venue")]).then(axios.spread(
+                (venue_response)=>{
+                    this.venues = venue_response.data.data;
+                    this.venues.forEach((label, index)=>{
+                        this.labelName.push(label["name"]);
+                        this.itemName.push(label["items"]);
+                    });
+                    this.showItemName = this.itemName[0];
+                    this.selectLabelName = this.labelName[0];
+                    this.selectItemName = this.showItemName[0];
+                    axios.get("/data/"+this.selectLabelName+"/"+this.selectItemName).then(data_response=>{
+                        this.datas = data_response.data.data;
+                        this.pagerData.page.totalCount = this.datas.length;
+                        this.getPageData(this.pagerData.page);
+                    });
+                }
+            ));
+        },
+        methods: {
+            changeLabelName: function(){
+                this.venues.forEach((label, index)=>{
+                    if(label.name == this.selectLabelName){
+                        this.showItemName = this.itemName[index];
+                        this.selectItemName = this.showItemName[0];
+                    }
                 });
-                this.selectLabelName = this.labelName[0];
-                this.selectItemName = this.itemName[0][0];
-            })
+            },
+            changeItemName: function() {
+                axios.get("/data/"+this.selectLabelName+"/"+this.selectItemName).then(data_response=>{
+                    this.datas = data_response.data.data;
+                });
+            },
+            getPageData: function(page) {
+                    this.pagerData.page.pageSize = page.pageSize;
+                    this.pagerData.page.pageCurrent = page.pageCurrent;
+                    this.pagerData.page.pageCount = Math.ceil(this.pagerData.page.totalCount / this.pagerData.page.pageSize);// 修改分页信息
+                    let newPageInfo = [];
+                    for (let i = 0; i < page.pageSize; i++) {
+                        let index =i+(page.pageCurrent-1)*page.pageSize;
+                        if(index>this.pagerData.page.totalCount-1)break;
+                            newPageInfo[newPageInfo.length] = this.datas[index];
+                    }
+                    this.pagerData.data = newPageInfo; // 修改分页数据
+            }
         }
     });
 </script>

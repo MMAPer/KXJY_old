@@ -59,8 +59,15 @@ def back_data(request):
     context["username"] = request.COOKIES.get("username")
     return render(request, 'back/admin_data.html', context)
 
-def back_venue(request):
-    pass
+
+def back_venue(request, class_name):
+    context = {}
+    context["username"] = request.COOKIES.get("username")
+    if class_name == "类别名称":
+        return render(request, "back/admin_venue_label.html")
+    elif class_name == "包含场馆":
+        return render(request, "back/admin_venue_item.html")
+
 
 def back_user(request):
     context = {}
@@ -71,10 +78,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login, name='login'),
     path('back/data/', back_data, name='back_data'),
-    path('back/venue/', back_venue, name='back_venue'),
+    path('back/venue/<class_name>', back_venue, name='back_venue'),
     path('back/user/', back_user, name='back_user'),
     path('venue/', include('venue.urls')),
-    # path('data/', include('data.urls')),
+    path('data/', include('data.urls')),
     path('user/', include('user.urls'))
 ]
 

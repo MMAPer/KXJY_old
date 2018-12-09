@@ -1,0 +1,143 @@
+{% extends 'back/admin_base.html' %}
+{% load staticfiles %}
+
+    {% block extra_script %}
+        <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    {% endblock %}
+
+    {% block extra_css  %}
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2.min.css' %}">
+    {% endblock %}
+
+    {%block div_id %}admin_data{% endblock %}
+
+
+    {% block content %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                数据管理
+                <small>
+                    <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px">
+                        {#                    <span class="glyphicon glyphicon-ok">&nbsp;</span>#}
+                        添加数据
+                    </button>
+                </small>
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>类别名称</label>
+                        <select class="form-control select2" style="width:90%;" v-model="selectLabelName">
+                            <option v-for="label in labelName" :value="label" style="text-align: center;" v-cloak>[[ label ]]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label>场馆名称</label>
+                        <select class="form-control select2 select2-hidden-accessible" style="width:90%;" tabindex="-1"
+                                aria-hidden="true" v-model="selectItemName">
+                            <option v-for="item in itemName[0]" :value="item">[[ item ]]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box box-info">
+                            <div class="box-header with-border">
+                                <h3 class="box-title" id="table-title">[[selectLabelName]]-[[selectItemName]]</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table no-margin table-bordered"
+                                           style="word-break:break-all; word-wrap:break-all;table-layout:fixed">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 5%">序号</th>
+                                                <th>展品/活动名称</th>
+                                                <th>基本内容</th>
+                                                <th>展品类别</th>
+                                                <th>展陈分类</th>
+                                                <th>展品技术</th>
+                                                <th style="width: 10%">展厅名称</th>
+                                                <th style="width:200px; text-align:center;">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="text-center" v-for="(data,index) in datas">
+                                                <td>[[ index+1 ]]</td>
+                                                <td>[[ data.data.name ]]</td>
+                                                <td>[[ data.data.content ]]</td>
+                                                <td>[[ data.data.exhibit_class ]]</td>
+                                                <td>[[ data.data.content ]]</td>
+                                                <td>[[ data.data.exhibition_class ]]</td>
+                                                <td>[[ data.data.exhibit_tech ]]</td>
+                                                <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
+                                                    <button class="btn btn-danger">删除</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--------------------------
+                      | Your Page Content Here |
+                      -------------------------->
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    {% endblock %}
+
+
+{% block end_script %}
+<script>
+    $(function(){
+        //Initialize Select2 Elements
+        $(".select2").select2();
+    });
+    let admin_data = new Vue({
+        el:"#admin_data",
+        delimiters: ["[[", "]]"],
+        data(){
+            return {
+                menu_data_active: true,
+                menu_venue_active: false,
+                menu_user_active: false,
+                menu_venue_label_active: false,
+                menu_venue_item_active: false,
+                venues: "",
+                labelName: [],
+                itemName: [],
+                selectLabelName: "",
+                selectItemName: "",
+                datas: ""
+            }
+        },
+        mounted(){
+            axios.all([axios.get("/venue"),
+            axios.get("/data")]).then(axios.spread(
+                (venue_response, data_response)=>{
+                    this.venues = venue_response.data.data;
+                    this.venues.forEach((label, index)=>{
+                        this.labelName.push(label["name"]);
+                        this.itemName.push(label["items"]);
+                    });
+                    this.selectLabelName = this.labelName[0];
+                    this.selectItemName = this.itemName[0][0];
+
+                    this.datas = data_response.data.data;
+                }
+            ));
+        }
+    });
+</script>
+{% endblock %}
