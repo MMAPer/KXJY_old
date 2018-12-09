@@ -36,7 +36,8 @@ def login(request):
     if request.method == 'POST':
         result = {}
         username = request.POST.get("username")
-        password = request.POST.get("password")
+        password = md5(request.POST.get("password"))
+        print(password)
         user_collection = db.user
         user = user_collection.find_one({'username': username, 'password': password})
         if user:
@@ -62,7 +63,9 @@ def back_venue(request):
     pass
 
 def back_user(request):
-    pass
+    context = {}
+    context["username"] = request.COOKIES.get("username")
+    return render(request, 'back/admin_user.html', context)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -70,7 +73,9 @@ urlpatterns = [
     path('back/data/', back_data, name='back_data'),
     path('back/venue/', back_venue, name='back_venue'),
     path('back/user/', back_user, name='back_user'),
-    path('venue/', include('venue.urls'))
+    path('venue/', include('venue.urls')),
+    # path('data/', include('data.urls')),
+    path('user/', include('user.urls'))
 ]
 
 """

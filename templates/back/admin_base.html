@@ -20,6 +20,7 @@
 
     <style>
         [v-cloak]{display: none;}
+        th{text-align: center}
     </style>
 
 </head>
@@ -94,9 +95,9 @@
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">HEADER</li>
                 <!-- Optionally, you can add icons to the links -->
-                <li class="" :class="{'active': menu_data_active}"><a href="#"><i class="fa fa-link"></i> <span>数据管理</span></a></li>
+                <li class="" :class="{'active': menu_data_active}"><a href="/back/data/"><i class="fa fa-link"></i> <span>数据管理</span></a></li>
                 <li class="treeview" :class="{'active': menu_venue_active}">
-                    <a href="#">
+                    <a href="/back/venue/">
                         <i class="fa fa-link"></i>
                         <span>类别管理</span>
                         <span class="pull-right-container">
@@ -108,7 +109,7 @@
                         <li><a href="#">包含场馆</a></li>
                     </ul>
                 </li>
-                <li :class="{'active': menu_user_active}"><a href="#"><i class="fa fa-link"></i> <span>用户管理</span></a></li>
+                <li :class="{'active': menu_user_active}"><a href="/back/user/"><i class="fa fa-link"></i> <span>用户管理</span></a></li>
 
             </ul>
             <!-- /.sidebar-menu -->
