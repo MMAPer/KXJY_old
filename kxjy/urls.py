@@ -57,22 +57,25 @@ from common.auth import cookie_auth
 def back_data(request):
     context = {}
     context["username"] = request.COOKIES.get("username")
-    return render(request, 'back/admin_data.html', context)
+    return render(request, 'back/admin_search.html', context)
 
 
 def back_venue(request, class_name):
     context = {}
     context["username"] = request.COOKIES.get("username")
     if class_name == "类别名称":
-        return render(request, "back/admin_venue_label.html")
+        return render(request, "back/venue/admin_venue_label.html")
     elif class_name == "包含场馆":
-        return render(request, "back/admin_venue_item.html")
+        return render(request, "back/venue/admin_venue_item.html")
 
 
 def back_user(request):
     context = {}
     context["username"] = request.COOKIES.get("username")
-    return render(request, 'back/admin_user.html', context)
+    return render(request, 'back/user/admin_user.html', context)
+
+def back_search(request):
+    return render(request, 'back/search/admin_search.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -80,6 +83,7 @@ urlpatterns = [
     path('back/data/', back_data, name='back_data'),
     path('back/venue/<class_name>', back_venue, name='back_venue'),
     path('back/user/', back_user, name='back_user'),
+    path('back/search/', back_search, name='back_search'),
     path('venue/', include('venue.urls')),
     path('data/', include('data.urls')),
     path('user/', include('user.urls'))

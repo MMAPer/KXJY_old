@@ -1,7 +1,7 @@
 from bson import json_util
 from django.http import JsonResponse
 from django.shortcuts import render
-from kjjy.settings import db
+from kxjy.settings import db
 
 # Create your views here.
 

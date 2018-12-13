@@ -5,8 +5,9 @@ from . import views
 app_name = 'data'
 
 #  视图函数反转：reverse('venue:index')
-
+#  数据层级：label->venue->item
 urlpatterns = [
     path('', views.getDatas, name='index'),
-    path('<labelName>/<itemName>', views.getDataByLabelAndName)
+    path('<labelName>/<venueName>', views.getDataByLabelAndName),
+    path('search', views.searchData),
 ]

@@ -1,34 +1,33 @@
 obj1={
-	"name":"科技馆展品",
-	"items":["上海科技馆","上海自然博物馆","中国科技馆","北京老牛儿童馆",
+	"label":"科技馆展品",
+	"venues":["上海科技馆","上海自然博物馆","中国科技馆","北京老牛儿童馆",
 	"北京索尼探梦馆","辽宁科技馆","广西科技馆","浙江省科技馆",
 	"杭州低碳馆","绍兴科技馆","温州科技馆","重庆科技馆",
 	"合肥科技馆","厦门科技馆"]
 	};
 	
 obj2={
-	"name":"2018专业馆",
-	"items":["北京自然博物馆", "中国地质博物馆","上海科技馆","上海自然博物馆"]
+	"label":"2018专业馆",
+	"venues":["北京自然博物馆", "中国地质博物馆","上海科技馆","上海自然博物馆"]
 };
 
 obj3={
-	"name":"2018综合馆",
-	"items":["包头科技馆", "大庆科技馆","东莞科技馆","佛山科技馆","广东科学中心",
+	"label":"2018综合馆",
+	"venues":["包头科技馆", "大庆科技馆","东莞科技馆","佛山科技馆","广东科学中心",
 	"黑龙江科技馆","内蒙古科技馆","宁波探索中心","中国科技馆"]
 };
 
 user1={
 	"username":"serp",
-	"password":"serp123456",
+	"password":"04fca5e755f4980b6bbb1f196b46bd45",
 	"role":"super",
 	"permission":["add", "delete", "update", "query"]
-}；
+};
 
 data1={
-	"name":"科技馆展品",
-	"item":"上海科技馆",
-	"data":{
-		"no":"1",
+	"label":"科技馆展品",
+	"venue":"上海科技馆",
+	"item":{
 		"name":"计算机是如何工作的",
 		"content":"展墙，计算机模型，相关配件模型模拟信息存储",
 		"standard_code":"32.2d",
@@ -45,6 +44,33 @@ data1={
 		"method":"按顺序有序观看，并理解其应用",
 		"effect":"差",
 		"people_number":"0",
+		"room":"信息时代",
+		"narrate_stru":"主题",
+		"weekend":"二",
+		"record_time":"10:22-10:51",
+		"record_people":"刘伟男"}
+}
+
+data2={
+	"label":"科技馆展品",
+	"venue":"上海科技馆",
+	"item":{
+		"name":"计算机网络",
+		"content":"屏幕，交互模型，信息传递实体化",
+		"standard_code":"",
+		"standard_strength":"",
+		"congnition_level":"理解",
+		"explore_factor":"",
+		"STSE_factor":"ST",
+		"space_layout":"组合",
+		"teach_style":"讲解",
+		"teach_content":"操作",
+		"exhibit_class":"互动",
+		"exhibition_class":"合作交互",
+		"exhibit_tech":"机械",
+		"method":"将代表信息的小球放入展品，点选不同的任务向，会传递到不同的地方",
+		"effect":"中",
+		"people_number":"10",
 		"room":"信息时代",
 		"narrate_stru":"主题",
 		"weekend":"二",

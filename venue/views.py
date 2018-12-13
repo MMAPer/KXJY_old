@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, reverse
-from kjjy.settings import db
+from kxjy.settings import db
 import json
 from bson import json_util
 from common.auth import cookie_auth

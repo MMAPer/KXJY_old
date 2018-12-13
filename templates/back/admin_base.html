@@ -31,9 +31,9 @@
         <!-- Logo -->
         <a href="/back" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>K</b>JJY</span>
+            <span class="logo-mini"><b>K</b>XJY</span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>K</b>JJY</span>
+            <span class="logo-lg"><b>K</b>XJY</span>
         </a>
         <!-- Header Navbar -->
         <nav class="navbar navbar-static-top" role="navigation">
@@ -79,15 +79,15 @@
             </div>
 
             <!-- search form (Optional) -->
-            <form action="/search" method="post" class="sidebar-form">
-                <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="展品搜索">
-                    <span class="input-group-btn">
-              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-              </button>
-            </span>
-                </div>
-            </form>
+{#            <form action="/search" method="post" class="sidebar-form">#}
+{#                <div class="input-group">#}
+{#                    <input type="text" name="q" class="form-control" placeholder="请输入展馆或展品名称">#}
+{#                    <span class="input-group-btn">#}
+{#              <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>#}
+{#              </button>#}
+{#            </span>#}
+{#                </div>#}
+{#            </form>#}
             <!-- /.search form -->
 
 
@@ -95,6 +95,7 @@
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">HEADER</li>
                 <!-- Optionally, you can add icons to the links -->
+                <li :class="{'active': menu_search_active}"><a href="/back/search/"><i class="fa fa-link"></i> <span>展品搜索</span></a></li>
                 <li class="" :class="{'active': menu_data_active}"><a href="/back/data/"><i class="fa fa-link"></i> <span>数据管理</span></a></li>
                 <li class="treeview" :class="{'active': menu_venue_active}">
                     <a href="#">

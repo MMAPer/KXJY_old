@@ -1,0 +1,201 @@
+{% extends 'back/admin_base.html' %}
+{% load staticfiles %}
+
+    {% block extra_script %}
+        <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+    {% endblock %}
+
+    {% block extra_css  %}
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2.min.css' %}">
+    {% endblock %}
+
+    {%block div_id %}admin_search{% endblock %}
+
+
+    {% block content %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                展品搜索
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="form-inline col-md-8">
+                    <div class="form-group" style="margin-right: 20px">
+                        <label for="venueName">展馆名称</label>
+                        <input type="text" class="form-control" id="venueName" v-model="venueName">
+                    </div>
+                    <div class="form-group" style="margin-right: 20px">
+                        <label for="itemName">展品名称</label>
+                        <input type="text" class="form-control" id="itemName" v-model="itemName">
+                    </div>
+                    <button type="submit" class="btn btn-primary" @click="searchData">搜索</button>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box box-info">
+                        <div class="box-body">
+                            <div class="table-responsive" v-if="showStatus">
+                                <table class="table no-margin table-bordered" style="word-break:break-all; word-wrap:break-all;table-layout:fixed">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%">序号</th>
+                                        <th>展品名称</th>
+                                        <th>数据类别</th>
+                                        <th>展馆名称</th>
+                                        <th>基本内容</th>
+                                        <th>展厅名称</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center" v-for="item,index in datas">
+                                        <td>[[index+1]]</td>
+                                        <td><a href="#">[[item.item.name]]</a></td>
+                                        <td>[[item.label]</td>
+                                        <td>[[item.venue]]</td>
+                                        <td>[[item.item.content]]</td>
+                                        <td>[[item.item.room]]</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                            <div class="pager" id="pager" v-if="showStatus">
+                                <span class="btn btn-default" @click="showPage(1)">首页</span>
+                                <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent-1)">上一页</span>
+                                <span class="form-inline">
+                                <input class="form-control" style="width:60px;text-align:center" type="text" v-model="pagerData.page.pageCurrent" @keyup.enter="showPage(pagerData.page.pageCurrent)" />
+                                </span>
+                                <span>共[[pagerData.page.pageCount]]页</span>
+                                <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent+1)">下一页</span>
+                                <span class="btn btn-default" @click="showPage(pagerData.page.pageCount)">尾页</span>
+                                <span>共[[pagerData.page.totalCount]]条数据，当前显示第[[startData]]-[[endData]]条记录</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--------------------------
+                  | Your Page Content Here |
+                  -------------------------->
+            </div>
+        </section>
+        <!-- /.content -->
+    {% endblock %}
+
+
+{% block end_script %}
+<script>
+    let admin_search = new Vue({
+        el:"#admin_search",
+        delimiters: ["[[", "]]"],
+        data(){
+            return {
+                menu_search_active: true,
+                menu_data_active: false,
+                menu_venue_active: false,
+                menu_user_active: false,
+                menu_venue_label_active: false,
+                menu_venue_item_active: false,
+                venueName: "",
+                itemName: "",
+                showStatus: false,
+                datas: [],
+                pagerData: {
+                    data: [],
+                    page: {
+                        arrPageSize: [10, 20, 30],
+                        pageSize: 10,
+                        pageCount: 1,
+                        pageCurrent: 1,
+                        totalCount: 1
+                    }
+                },
+                sortparam: "",
+                sorttype: 1
+            }
+        },
+        methods: {
+            searchData(){
+                axios.get('/data/search?venue='+this.venueName+'&item='+this.itemName).then(response=>{
+                    data = response.data;
+                    if(data.length!=0)
+                    {
+                        this.datas = data.data;
+                        this.showStatus = true;
+                    } else {
+                        alert("未查询到相关信息");
+                        this.datas = [];
+                        this.showStatus = false;
+                    }
+                    this.pagerData.page = {
+                            arrPageSize: [10, 20, 30],
+                            pageSize: 10,
+                            pageCount: 1,
+                            pageCurrent: 1,
+                            totalCount: 1
+                        };
+                        this.pagerData.page.totalCount = this.datas.length;
+                        this.getPageData(this.pagerData.page);
+
+                });
+            },
+                    showPage: function (pageIndex) {
+                    if (pageIndex > 0) {
+                        if(pageIndex>this.pagerData.page.pageCount) pageIndex = this.page.pageCount;
+                        this.getPageData({pageCurrent:pageIndex,pageSize:this.pageSize});//事件
+                    }
+                },
+            sortBy: function (sortparam) {
+                        this.sortparam = sortparam;
+                        this.sorttype = this.sorttype == -1 ? 1 : -1;
+                    },
+            getPageData: function(page) {
+                    this.pagerData.page.pageSize = page.pageSize;
+                    this.pagerData.page.pageCurrent = page.pageCurrent;
+                    this.pagerData.page.pageCount = Math.ceil(this.pagerData.page.totalCount / this.pagerData.page.pageSize);// 修改分页信息
+                    let newPageInfo = [];
+                    for (let i = 0; i < page.pageSize; i++) {
+                        let index =i+(page.pageCurrent-1)*page.pageSize;
+                        if(index>this.pagerData.page.totalCount-1)break;
+                            newPageInfo[newPageInfo.length] = this.datas[index];
+                    }
+                    this.pagerData.data = newPageInfo; // 修改分页数据
+            }
+        },
+            //计算属性
+        computed:{
+        // 分页大小 获取的时候显示父级传入的，修改的时候修改自身的。子组件不能修改父元素的值
+        pageSize:{
+            get:function(){
+                return this.pagerData.page.pageSize;
+            },
+            set:function(value){
+                this.pagerData.page.pageSize = value;
+            }
+        },
+        pageCurrent:{
+            get:function(){
+                return this.pagerData.page.pageCurrent;
+            },
+            set:function(value){
+                this.pagerData.page.pageCurrent = value;
+            }
+        },
+        startData:function(){
+            return this.pagerData.page.pageSize*(this.pagerData.page.pageCurrent-1)+1;
+        },
+        endData:function(){
+            let max =this.pagerData.page.pageSize*this.pagerData.page.pageCurrent;
+            return max>this.pagerData.page.totalCount?this.pagerData.page.totalCount:max;
+        }
+    },
+
+    });
+</script>
+{% endblock %}

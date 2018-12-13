@@ -1,0 +1,157 @@
+{% extends 'back/admin_base.html' %}
+{% load staticfiles %}
+
+    {% block extra_css %}
+        <link href="{% static 'mycss/imgupload.css' %}">
+    {% endblock %}
+
+    {%block div_id %}admin_data_add{% endblock %}
+
+
+    {% block content %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                数据添加
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="form-horizontal col-md-8">
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" id="table-title">科技馆展品-上海科技馆</h3>
+                        </div>
+                    </div>
+                    <div class="form-group" v-for="item in table.table">
+                        <label :for="item.remark" class="col-sm-2 control-label">[[ item.name ]]</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" :id="item.remark">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2"></div>
+
+            </div>
+            <div class="row">
+                 <div class="col-md-2"></div>
+                 <div class="img_upload col-md-8" >
+                    <div class="upload">
+                        <div class="upload_warp_left" @click="fileClick" >
+                            <button class="btn btn-success">选择图片</button>
+                        </div>
+                        <div class="upload_warp_text">
+                            选中[[imgList.length]]张文件，共[[bytesToSize(this.size)]];
+                        </div>
+                        <div class="upload_warp" style="border: 1px solid white;">
+                            <div class="upload_warp_img" v-show="imgList.length!=0" >
+                                <div class="upload_warp_img_div" style="float:left;margin-right:10px" v-for="(item,index) of imgList" >
+                                    <div class="upload_warp_img_div_top" >
+                                        <div class="upload_warp_img_div_text" >
+                                            [[item.file.name]]
+                                        </div>
+                                        <img src="{% static 'imgs/del.png' %}" class="upload_warp_img_div_del" @click="fileDel(index)">
+                                    </div>
+                                    <img :src="item.file.src" style="width:200px;height:150px">
+                                </div>
+                            </div>
+                        </div>
+                        <input @change="fileChange($event)" type="file" id="upload_file" multiple style="display: none"/>
+                    </div>
+                 </div>
+            </div>
+            <!--------------------------
+                  | Your Page Content Here |
+                  -------------------------->
+
+        </section>
+        <!-- /.content -->
+    {% endblock %}
+
+
+{% block end_script %}
+<script>
+let admin_data_add = new Vue({
+    el: "#admin_data_add",
+    delimiters: ["[[", "]]"],
+    data () {
+        return {
+            menu_data_active: true,
+            menu_venue_active: false,
+            menu_user_active: false,
+            menu_venue_label_active: false,
+            menu_venue_item_active: false,
+            imgList: [],
+            size: 0,
+            table: {"label":"科技馆展品", "table":[
+                {"name":"序号", "remark":"no"},{"name":"展品/活动名称", "remark":"no"},
+                {"name":"基本内容", "remark":"no"},{"name":"课表对接-编码", "remark":"no"},
+                {"name":"课表对接-强度", "remark":"no"},{"name":"认知水平", "remark":"no"},
+                {"name":"科学探究要素", "remark":"no"},{"name":"STSE要素", "remark":"no"},
+                {"name":"空间布局", "remark":"no"},{"name":"辅助讲解形式", "remark":"no"},
+                {"name":"辅助讲解内容", "remark":"no"},{"name":"展品类别", "remark":"no"},
+                {"name":"展陈分类", "remark":"no"},{"name":"展品技术", "remark":"no"},
+                {"name":"基本操作与科学方法的运用", "remark":"no"},{"name":"学习效果", "remark":"no"},
+                {"name":"参观人数", "remark":"no"},{"name":"展厅名称", "remark":"no"},
+                {"name":"展厅叙事结构", "remark":"no"},{"name":"星期", "remark":"no"},
+                {"name":"记录时间", "remark":"no"},{"name":"记录人", "remark":"no"},
+            ]},
+        }
+    },
+    methods: {
+        fileClick(){
+            document.getElementById('upload_file').click()
+        },
+        fileChange(el){
+            if (!el.target.files[0].size) return;
+            this.fileList(el.target.files);
+            el.target.value = ''
+        },
+        fileList(files){
+            for (let i = 0; i < files.length; i++) {
+                this.fileAdd(files[i]);
+            }
+        },
+        fileAdd(file){
+            this.size = this.size + file.size;//总大小
+            let reader = new FileReader();
+            reader.vue = this;
+            reader.readAsDataURL(file);
+            reader.onload = function () {
+                file.src = this.result;
+                this.vue.imgList.push({
+                    file
+                });
+            }
+        },
+        fileDel(index){
+            this.size = this.size - this.imgList[index].file.size;//总大小
+            this.imgList.splice(index, 1);
+        },
+        bytesToSize(bytes){
+            if (bytes === 0) return '0 B';
+            let k = 1000, // or 1024
+                sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+                i = Math.floor(Math.log(bytes) / Math.log(k));
+            return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+        },
+        dragenter(el){
+            el.stopPropagation();
+            el.preventDefault();
+        },
+        dragover(el){
+            el.stopPropagation();
+            el.preventDefault();
+        },
+        drop(el){
+            el.stopPropagation();
+            el.preventDefault();
+            this.fileList(el.dataTransfer.files);
+        }
+    }
+})
+</script>
+{% endblock %}
