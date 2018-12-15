@@ -1,7 +1,7 @@
 {% extends 'back/admin_base.html' %}
 {% load staticfiles %}
 
-    {%block div_id %}admin_venue_item{% endblock %}
+    {%block div_id %}admin_venue_venue{% endblock %}
 
     {% block content %}
         <!-- Content Header (Page header) -->
@@ -48,7 +48,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr class="text-center" v-for="item,index in showItemName">
+                                            <tr class="text-center" v-for="item,index in showVenueName">
                                                 <td><span>[[ index+1 ]]</span></td>
                                                 <td><span>[[ item ]]</span></td>
                                                 <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
@@ -71,11 +71,12 @@
 
 {% block end_script %}
 <script>
-    let admin_data = new Vue({
-        el:"#admin_venue_item",
+    let admin_venue_venue = new Vue({
+        el:"#admin_venue_venue",
         delimiters: ["[[", "]]"],
         data(){
             return {
+                menu_search_active: false,
                 menu_data_active: false,
                 menu_venue_active: true,
                 menu_user_active: false,
@@ -83,8 +84,8 @@
                 menu_venue_item_active: true,
                 venue: "",
                 labelName: [],
-                itemName: [],
-                showItemName: [],
+                venueName: [],
+                showVenueName: [],
                 selectLabelName: "",
             }
         },
@@ -92,10 +93,10 @@
             axios.get("/venue").then(response=>{
                 this.venue = response.data.data;
                 this.venue.forEach((label, index)=>{
-                    this.labelName.push(label["name"]);
-                    this.itemName.push(label["items"]);
+                    this.labelName.push(label["label"]);
+                    this.venueName.push(label["venues"]);
                 });
-                this.showItemName = this.itemName[0];
+                this.showVenueName = this.venueName[0];
                 this.selectLabelName = this.labelName[0];
             })
         },
@@ -103,8 +104,8 @@
             changeLabelName: function(ele){
                 this.selectLabelName = ele.target.value;
                 this.venue.forEach((label, index)=>{
-                    if(label.name == this.selectLabelName){
-                        this.showItemName = this.itemName[index];
+                    if(label.label == this.selectLabelName){
+                        this.showVenueName = this.venueName[index];
                     }
                 });
             }

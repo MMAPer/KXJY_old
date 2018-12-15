@@ -57,8 +57,8 @@
                                 <tbody>
                                     <tr class="text-center" v-for="item,index in datas">
                                         <td>[[index+1]]</td>
-                                        <td><a href="#">[[item.item.name]]</a></td>
-                                        <td>[[item.label]</td>
+                                        <td><a :href="[[item.href]]" target="_blank">[[item.item.name]]</a></td>
+                                        <td>[[item.label]]</td>
                                         <td>[[item.venue]]</td>
                                         <td>[[item.item.content]]</td>
                                         <td>[[item.item.room]]</td>
@@ -127,6 +127,9 @@
                     if(data.length!=0)
                     {
                         this.datas = data.data;
+                        this.datas.forEach((mydata, index)=>{
+                           mydata.href = "/data/detail/html/"+mydata.label+"/"+mydata.venue+"/"+mydata.item.name;
+                        });
                         this.showStatus = true;
                     } else {
                         alert("未查询到相关信息");

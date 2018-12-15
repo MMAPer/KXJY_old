@@ -10,4 +10,6 @@ urlpatterns = [
     path('', views.getDatas, name='index'),
     path('<labelName>/<venueName>', views.getDataByLabelAndName),
     path('search', views.searchData),
+    path('detail/html/<labelName>/<venueName>/<itemName>', views.getDetailHtml),
+    path('detail/<labelName>/<venueName>/<itemName>', views.getDetailData),
 ]

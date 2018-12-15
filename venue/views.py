@@ -12,6 +12,9 @@ from common.auth import cookie_auth
 
 
 #  获取目前全部场馆类别信息（二级目录）
+from kxjy.status import StatusCode
+
+
 @cookie_auth
 def getVenues(request):
     res = {}
@@ -25,7 +28,7 @@ def getVenues(request):
 def getVenuesLabel(request):
     res = {}
     venue_collection = db.venue
-    venues = list(venue_collection.find(projection={'name': True}))
+    venues = list(venue_collection.find(projection={'label': True}))
     res["data"] = venues
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
@@ -35,7 +38,7 @@ def getVenuesByLabel(request, label_name):
     print(label_name)
     res = {}
     venue_collection = db.venue
-    venue = venue_collection.find_one({'name': label_name}, projection={'items':True})
+    venue = venue_collection.find_one({'label': label_name}, projection={'venues':True})
     res["data"] = venue
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
@@ -57,7 +60,12 @@ def addVenueByLabel(request, label_name):
 
 
 #  删除一级目录
-
+def delLabel(request, labelName):
+    print("labelName=", labelName)
+    res = StatusCode.OK()
+    venue_collection = db.venue
+    venue_collection.find_one_and_delete({"label": labelName})
+    return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 #  删除指定一级目录下的二级目录
 

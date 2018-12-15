@@ -2,11 +2,11 @@
 {% load staticfiles %}
 
     {% block extra_script %}
-        <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
+        <script src="{% static 'plugins/sweetalert/sweetalert2.min.js' %}"></script>
     {% endblock %}
 
     {% block extra_css  %}
-        <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert/sweetalert2.min.css' %}">
     {% endblock %}
 
     {%block div_id %}admin_venue_label{% endblock %}
@@ -47,11 +47,11 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr class="text-center" v-for="label,index in labelName">
+                                            <tr class="text-center" v-for="label,index in labelNameArr">
                                                 <td><span>[[ index+1 ]]</span></td>
-                                                <td><span>[[ label.name ]]</span></td>
+                                                <td><span>[[ label.label ]]</span></td>
                                                 <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
-                                                    <button class="btn btn-danger">删除</button></td>
+                                                    <button class="btn btn-danger" @click="deleteLabel(label.label)">删除</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -75,20 +75,47 @@
         delimiters: ["[[", "]]"],
         data(){
             return {
+                menu_search_active: false,
                 menu_data_active: false,
                 menu_venue_active: true,
                 menu_user_active: false,
                 menu_venue_label_active: true,
                 menu_venue_item_active: false,
-                labelName: []
+                labelNameArr: []
             }
         },
         mounted(){
             axios.get("/venue/label").then(
                 response=>{
-                    this.labelName = response.data.data;
+                    this.labelNameArr = response.data.data;
                 }
             )
+        },
+        methods: {
+            deleteLabel(label){
+                swal({
+                    title: "操作提示",
+                    text: "确定删除该类别吗？",
+                    type: "warning",
+                    showCancelButton: true,
+                    confimButtonColor: "#DD6B55",
+                    cancelButtonText: "取消",
+                    confirmButtonText: "是的，确定删除！",
+                    closeOnConfirm: true
+                }).then((isConfirm) => {
+                    if(isConfirm){
+                        axios.delete("/venue/label/delete/" + label).then(response => {
+                            res = response.data;
+                            alert(res.code);
+                            if (res.code == 20000) {
+                                window.location.reload();
+                            } else if (res.code == 20003) {
+                                alert("您没有操作权限")
+                            }
+                        });
+                    }
+                });
+            }
         }
     });
 </script>

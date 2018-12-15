@@ -7,7 +7,8 @@ app_name = 'venue'
 #  视图函数反转：reverse('venue:index')
 
 urlpatterns = [
-    path('', views.getVenues, name='index'),
-    path('label', views.getVenuesLabel),
-    path('label/<label_name>', views.getVenuesByLabel),
+    path('', views.getVenues, name='index'),  # 得到所有数据类别和其包含场馆的信息
+    path('label', views.getVenuesLabel),  # 只获得数据类别
+    path('label/<labelName>', views.getVenuesByLabel),  # 获取指定数据类别下面包含的场馆
+    path('label/delete/<labelName>', views.delLabel),  # 删除指定类别
 ]

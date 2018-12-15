@@ -34,8 +34,8 @@
                     <div class="form-group">
                         <label>场馆名称</label>
                         <select class="form-control" style="width:90%;" tabindex="-1"
-                                aria-hidden="true" v-model="selectItemName" @change="changeItemName">
-                            <option v-for="item in showItemName" :value="item">[[ item ]]</option>
+                                aria-hidden="true" v-model="selectVenueName" @change="changeVenueName">
+                            <option v-for="item in showVenueName" :value="item">[[ item ]]</option>
                         </select>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                     <div class="col-md-12">
                         <div class="box box-info">
                             <div class="box-header with-border">
-                                <h3 class="box-title" id="table-title">[[selectLabelName]]-[[selectItemName]]</h3>
+                                <h3 class="box-title" id="table-title">[[selectLabelName]]-[[selectVenueName]]</h3>
                             </div>
                             <div class="box-body">
                                 <div class="table-responsive">
@@ -53,24 +53,22 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 5%">序号</th>
-                                                <th>展品/活动名称</th>
+                                                <th>展品名称</th>
+                                                <th>数据类别</th>
+                                                <th>展馆名称</th>
                                                 <th>基本内容</th>
-                                                <th>展品类别</th>
-                                                <th>展陈分类</th>
-                                                <th>展品技术</th>
-                                                <th style="width: 10%">展厅名称</th>
+                                                <th>展厅名称</th>
                                                 <th style="width:15%; text-align:center;">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr class="text-center" v-for="(data,index) in pagerData.data">
                                                 <td>[[ index+1 ]]</td>
-                                                <td>[[ data.data.name ]]</td>
-                                                <td>[[ data.data.content ]]</td>
-                                                <td>[[ data.data.exhibit_class ]]</td>
-                                                <td>[[ data.data.content ]]</td>
-                                                <td>[[ data.data.exhibition_class ]]</td>
-                                                <td>[[ data.data.exhibit_tech ]]</td>
+                                                <td><a :href="[[data.href]]" target="_blank">[[ data.item.name ]]</a></td>
+                                                <td>[[ data.label ]]</td>
+                                                <td>[[ data.venue ]]</td>
+                                                <td>[[ data.item.content ]]</td>
+                                                <td>[[ data.item.room ]]</td>
                                                 <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
                                                 <button class="btn btn-danger">删除</button></td>
                                             </tr>
@@ -113,6 +111,7 @@ let admin_data = new Vue({
     delimiters: ["[[", "]]"],
     data(){
         return {
+            menu_search_active: false,
             menu_data_active: true,
             menu_venue_active: false,
             menu_user_active: false,
@@ -120,10 +119,10 @@ let admin_data = new Vue({
             menu_venue_item_active: false,
             venues: "",
             labelName: [],
-            itemName: [],
-            showItemName: [],
+            venueName: [],
+            showVenueName: [],
             selectLabelName: "",
-            selectItemName: "",
+            selectVenueName: "",
             datas: "",
             pagerData: {
                 data: [],
@@ -140,36 +139,35 @@ let admin_data = new Vue({
         }
     },
     mounted(){
-        axios.all([axios.get("/venue")]).then(axios.spread(
-            (venue_response)=>{
-                this.venues = venue_response.data.data;
-                this.venues.forEach((label, index)=>{
-                    this.labelName.push(label["name"]);
-                    this.itemName.push(label["items"]);
-                });
-                this.showItemName = this.itemName[0];
-                this.selectLabelName = this.labelName[0];
-                this.selectItemName = this.showItemName[0];
-                axios.get("/data/"+this.selectLabelName+"/"+this.selectItemName).then(data_response=>{
-                    this.datas = data_response.data.data;
-                    this.pagerData.page.totalCount = this.datas.length;
-                    this.getPageData(this.pagerData.page);
-                });
-            }
-        ));
+        axios.get("/venue").then(venue_response=>{
+            this.venues = venue_response.data.data;
+            this.venues.forEach((label, index)=>{
+                this.labelName.push(label["label"]);
+                this.venueName.push(label["venues"]);
+            });
+            this.showVenueName = this.venueName[0];
+            this.selectLabelName = this.labelName[0];
+            this.selectVenueName = this.showVenueName[0];
+            axios.get("/data/"+this.selectLabelName+"/"+this.selectVenueName).then(data_response=>{
+                this.datas = data_response.data.data;
+                this.pagerData.page.totalCount = this.datas.length;
+                this.getPageData(this.pagerData.page);
+            });
+        }
+        );
     },
     methods: {
         changeLabelName: function(){
             this.venues.forEach((label, index)=>{
-                if(label.name == this.selectLabelName){
-                    this.showItemName = this.itemName[index];
-                    this.selectItemName = this.showItemName[0];
+                if(label.label == this.selectLabelName){
+                    this.showVenueName = this.venueName[index];
+                    this.selectVenueName = this.showVenueName[0];
                 }
             });
-            this.changeItemName();
+            this.changeVenueName();
         },
-        changeItemName: function() {
-            axios.get("/data/"+this.selectLabelName+"/"+this.selectItemName).then(data_response=>{
+        changeVenueName: function() {
+            axios.get("/data/"+this.selectLabelName+"/"+this.selectVenueName).then(data_response=>{
                 this.datas = data_response.data.data;
                 this.pagerData.page = {
                     arrPageSize: [10, 20, 30],
@@ -203,6 +201,9 @@ let admin_data = new Vue({
                         newPageInfo[newPageInfo.length] = this.datas[index];
                 }
                 this.pagerData.data = newPageInfo; // 修改分页数据
+                this.pagerData.data.forEach((datas_item, item)=>{
+                   datas_item.href = "/data/detail/html/"+datas_item.label+"/"+datas_item.venue+"/"+datas_item.item.name;
+                });
         }
     },
     //计算属性

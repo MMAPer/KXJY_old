@@ -77,5 +77,50 @@ data2={
 		"record_time":"10:22-10:51",
 		"record_people":"刘伟男"}
 }
+
+
+data3={
+	"label": "2018综合馆",
+	"venue": "包头科技馆",
+	"item": {
+		"name": "勾股定理",
+		"content":"",
+		"room": "数学展厅",
+		"style_design":"1,2,3,4,5",
+		"selection_principle":{
+			"educative_nature": "H",
+			"science_nature": "H",
+			"interesting_nature":"H",
+			"artistry_nature":"H",
+			"participative_nature":"H",
+			"operation_nature":"M",
+		},
+		"writing_principle":{
+			"topic_prominence":"H",
+			"clear_standpoint":"H",
+			"style_distinctive":"M"
+		},
+		"writing_norm":"1,2,3,4",
+		"digital_media":"1",
+		"exhibit_style":"1,3",
+		"science_knowledge":"2",
+		"exhibit_content": "1"
+	}
+}
+
+table = {"label":"科技馆展品", "table":[
+                {"name":"展品/活动名称", "remark":"name"},
+                {"name":"基本内容", "remark":"content"},{"name":"课表对接-编码", "remark":"standard_code"},
+                {"name":"课表对接-强度", "remark":"standard_strength"},{"name":"认知水平", "remark":"congnition_level"},
+                {"name":"科学探究要素", "remark":"explore_factor"},{"name":"STSE要素", "remark":"STSE_factor"},
+                {"name":"空间布局", "remark":"space_layout"},{"name":"辅助讲解形式", "remark":"teach_style"},
+                {"name":"辅助讲解内容", "remark":"teach_content"},{"name":"展品类别", "remark":"exhibit_class"},
+                {"name":"展陈分类", "remark":"exhibition_class"},{"name":"展品技术", "remark":"exhibit_tech"},
+                {"name":"基本操作与科学方法的运用", "remark":"method"},{"name":"学习效果", "remark":"effect"},
+                {"name":"参观人数", "remark":"people_number"},{"name":"展厅名称", "remark":"room"},
+                {"name":"展厅叙事结构", "remark":"narrate_stru"},{"name":"星期", "remark":"weekend"},
+                {"name":"记录时间", "remark":"record_time"},{"name":"记录人", "remark":"record_people"},
+            ]}
+
 	
 	
