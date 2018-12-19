@@ -1,0 +1,115 @@
+{% extends 'front/base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    科学教育资源平台-湖北省科学技术馆
+{% endblock %}
+
+{% block nav_index_activate %}active{% endblock %}
+
+{% block content %}
+
+    <!-- start banner -->
+    <section id="banner">
+        <!-- Slider -->
+        <div id="main-slider" class="flexslider">
+                <ul class="slides">
+                  <li>
+                    <img src="{% static 'imgs/slides/bg1.jpg' %}" alt="" />
+                         <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                    <div class="flex-caption">
+                        <h3>科学技术文化传播</h3>
+                        <p>让科学流行起来，让科学流行起来。</p>
+                    </div>
+                     </div>
+                </div>
+            </div>
+                  </li>
+                  <li>
+                    <img src="{% static 'imgs/slides/bg2.jpg' %}" alt="" />
+                     <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                    <div class="flex-caption">
+                        <h3>低碳生活</h3>
+                        <p>低碳出行你我他，构建绿色生活环境。</p>
+                    </div>
+                     </div>
+                </div>
+            </div>
+                  </li>
+                </ul>
+            </div>
+        <!-- end slider -->
+	</section>
+    <!-- end banner -->
+
+
+    <!-- 平台简介 -->
+	<section class="callaction">
+	    <div class="callaction-1 container">
+		<div class="row">
+			<div class="col-lg-12">
+				<div>
+                    <h1>平台简介</h1>
+                    <p style="text-indent: 2em">
+                        科学教育资源平台旨在将国内部分科技馆、植物科普馆、地质科普馆、水生科普馆
+                        等的相关资料、展品资料全部录入科教资源平台，突破场馆信息孤岛，实现资源整合。
+                        并提供符合行业从业者和普通大众的内容检索方式，提供准确全面的科普资源信息服务。
+                    </p>
+                </div>
+			</div>
+		</div>
+	</div>
+	</section>
+    <!-- 湖北科技馆特色 -->
+	<section class="features">
+      <div class="container">
+		  <div class="row">
+			<div class="col-md-12">
+				<div><h2>湖北省科技馆特色</h2><p style="text-indent: 2em">湖北省科学技术馆(The Science&Technology Museum OF Hubei Province)位于武汉市中心地带、洪山广场东侧。主楼（一期工程）建成于1989年5月，1992年底正式开馆。现有场馆总面积7400平方米。 湖北省科技馆目前开展的主要科普活动有：科普展览开发设计、科普展品研制、科普展教、培训活动、科普信息服务等。截止到2006年9月，我馆已创作完成了23套有自主知识产权的科普展览，研制声、光、电、磁等科普展品270余件（套）。除自展外，我馆的科普展览、展品常年在全省60余座市（州）、县科技馆及中小学校、社区巡回展出，部分展览曾赴外省兄弟馆展出。</p></div>
+				<br/>
+			</div>
+		</div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="features-item">
+                <div class="features">
+                  <div class="icon">
+                   <i class="icon-map icons"></i>
+                  </div>
+                  <div class="features-content">
+                    <h3>特色一</h3>
+                    <p style="text-indent: 2em">湖北省科学技术馆(The Science&Technology Museum OF Hubei Province)位于武汉市中心地带、洪山广场东侧。主楼（一期工程）建成于1989年5月，1992年底正式开馆。现有场馆总面积7400平方米。</p>
+                  </div>
+                </div>
+                <div class="features">
+                  <div class="icon">
+                    <i class="icon-envelope-open icons"></i>
+                  </div>
+                  <div class="features-content">
+                    <h3>特色二</h3>
+                    <p style="text-indent: 2em">湖北省科技馆目前开展的主要科普活动有：科普展览开发设计、科普展品研制、科普展教、培训活动、科普信息服务等。截止到2006年9月，我馆已创作完成了23套有自主知识产权的科普展览，研制声、光、电、磁等科普展品270余件（套）。</p>
+                  </div>
+                </div>
+                <div class="features">
+                  <div class="icon">
+                    <i class="icon-badge icons"></i>
+                  </div>
+                  <div class="features-content">
+                    <h3>特色三</h3>
+                    <p style="text-indent: 2em">除自展外，我馆的科普展览、展品常年在全省60余座市（州）、县科技馆及中小学校、社区巡回展出，部分展览曾赴外省兄弟馆展出。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <img class="img-responsive" src="{% static 'imgs/pic01.jpg' %}" alt="">
+            </div>
+          </div>
+        </div>
+  </section>
+{% endblock %}
+

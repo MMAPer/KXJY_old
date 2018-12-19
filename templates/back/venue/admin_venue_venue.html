@@ -1,6 +1,14 @@
 {% extends 'back/admin_base.html' %}
 {% load staticfiles %}
 
+    {% block extra_script %}
+        <script src="{% static 'plugins/sweetalert/sweetalert2.min.js' %}"></script>
+    {% endblock %}
+
+    {% block extra_css  %}
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert/sweetalert2.min.css' %}">
+    {% endblock %}
+
     {%block div_id %}admin_venue_venue{% endblock %}
 
     {% block content %}
@@ -14,6 +22,7 @@
         <!-- Main content -->
         <section class="content container-fluid">
             <div class="row">
+                <div class="col-md-2"></div>
                 <div class="col-md-5">
                     <div class="form-group">
                         <label>数据类别</label>
@@ -23,7 +32,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-primary" style="margin-left:50px; margin-top:25px;">
+                    <button class="btn btn-primary" style="margin-left:50px; margin-top:25px;" @click="addVenue">
                         {#                    <span class="glyphicon glyphicon-ok">&nbsp;</span>#}
                         添加场馆
                     </button>
@@ -31,6 +40,7 @@
             </div>
             <div>
                 <div class="row">
+                    <div class="col-md-2"></div>
                     <div class="col-md-8">
                         <div class="box box-info">
                             <div class="box-header with-border">
@@ -51,8 +61,8 @@
                                             <tr class="text-center" v-for="item,index in showVenueName">
                                                 <td><span>[[ index+1 ]]</span></td>
                                                 <td><span>[[ item ]]</span></td>
-                                                <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
-                                                    <button class="btn btn-danger">删除</button></td>
+                                                <td><button class="btn btn-primary" style="margin-right: 10px;" @click="modifyVenue(item)">修改</button>
+                                                    <button class="btn btn-danger" @click="deleteVenue(item)">删除</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -67,6 +77,47 @@
             </div>
         </section>
         <!-- /.content -->
+
+        <div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-labelledby="addVenue">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modifyVenue">修改场馆名称</h4>
+                </div>
+                    <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txt_venueName">场馆名称</label>
+                        <input type="text" name="modify_venueName" class="form-control" id="modify_venueName" v-model="modify_venueName" placeholder="场馆名称">
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <button type="button" id="modify_submit" @click="modifySubmit(modify_origin_venueName,modify_venueName)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认修改</button>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="addVenue">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="addVenue">添加场馆</h4>
+                    </div>
+                    <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txt_venueName">场馆名称</label>
+                        <input type="text" name="add_venueName" class="form-control" id="add_venueName" v-model="add_venueName" placeholder="场馆名称">
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <button type="button" id="add_submit" @click="addSubmit(add_venueName)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认添加</button>
+                </div>
+                </div>
+            </div>
+        </div>
     {% endblock %}
 
 {% block end_script %}
@@ -87,6 +138,9 @@
                 venueName: [],
                 showVenueName: [],
                 selectLabelName: "",
+                modify_origin_venueName: "",  // 修改之前的
+                modify_venueName: "",  //修改之后的
+                add_venueName: "",
             }
         },
         mounted(){
@@ -108,7 +162,68 @@
                         this.showVenueName = this.venueName[index];
                     }
                 });
-            }
+            },
+            addVenue(){
+                $('#add').modal();
+            },
+            addSubmit(venueName){
+               axios({
+                   url: "/venue/venue/add/",
+                   method: "POST",
+                   data: {"label":this.selectLabelName, "venue":venueName},
+                   transformRequest: [function (data) {
+                       let ret = '';
+                       for (let it in data) {
+                           ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
+                       }
+                       return ret;
+                   }]}).then(response => {
+                        res = response.data;
+                        if (res.code == 20000) {
+                            window.location.reload();
+                        } else if (res.code == 20003) {
+                            alert("您没有操作权限");
+                        }
+                   });
+            },
+            modifyVenue(venueName){
+                this.modify_origin_venueName = venueName;
+                this.modify_venueName = venueName;
+                $('#modify').modal();
+            },
+            modifySubmit(originVenue, venue){
+                axios.delete("/venue/venue/modify/"+ this.selectLabelName + "/" + originVenue + "/" + venue).then(response => {
+                    res = response.data;
+                    if (res.code == 20000) {
+                        window.location.reload();
+                    } else if (res.code == 20003) {
+                        alert("您没有操作权限");
+                    }
+                });
+            },
+            deleteVenue(venueName){
+                swal({
+                    title: "操作提示",
+                    text: "确定删除该场馆吗？",
+                    type: "warning",
+                    showCancelButton: true,
+                    confimButtonColor: "#DD6B55",
+                    cancelButtonText: "取消",
+                    confirmButtonText: "是的，确定删除！",
+                    closeOnConfirm: true
+                }).then((isConfirm) => {
+                    if(isConfirm){
+                        axios.delete("/venue/venue/delete/" + this.selectLabelName+"/" + venueName).then(response => {
+                            res = response.data;
+                            if (res.code == 20000) {
+                                window.location.reload();
+                            } else if (res.code == 20003) {
+                                alert("您没有操作权限")
+                            }
+                        });
+                    }
+                });
+            },
         }
     });
 </script>

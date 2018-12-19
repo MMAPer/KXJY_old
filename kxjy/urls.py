@@ -84,9 +84,12 @@ def back_search(request):
     context["username"] = request.COOKIES.get("username")
     return render(request, 'back/search/admin_search.html')
 
+def front_index(request):
+    return render(request, 'front/index.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', front_index),
     path('login/', login, name='login'),
     path('back/data/', back_data, name='back_data'),
     path('back/venue/<class_name>', back_venue, name='back_venue'),
