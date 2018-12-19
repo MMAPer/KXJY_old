@@ -54,7 +54,7 @@
                             <li><a href="http://www.whiob.ac.cn/">武汉植物园</a></li>
                             <li><a href="http://mus.cug.edu.cn/">逸夫博物馆</a></li>
                             <li><a href="http://www.ihb.ac.cn/">水生所</a></li>
-                            <li class="{% block nav_search_activate %}{% endblock %}"><a href="">资源搜索</a></li>
+                            <li class="{% block nav_search_activate %}{% endblock %}"><a href="{% url 'front_search' %}">资源搜索</a></li>
                             <li class="{% block nav_login_activate %}{% endblock %}"><a href="{% url 'login' %}">后台</a></li>
                         </ul>
                     </div>

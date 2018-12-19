@@ -1,0 +1,123 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据详情</title>
+    <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dist/js/adminlte.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vue/vue.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vue/axios.min.js' %}"></script>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/AdminLTE.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/skins/skin-blue.min.css' %}">
+
+    <style>
+        [v-cloak]{display: none;}
+        th{text-align: center}
+        .navbar-default .navbar-nav > li > a {
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .navbar-default .navbar-nav > li > a:hover {
+            color: deepskyblue;
+        }
+    </style>
+</head>
+<body>
+    <div id="front_detail">
+        <div id="wrapper">
+        <!-- start header -->
+	        <header>
+                <div class="navbar navbar-default navbar-static-top"  style="background-color: #3c3c3c;margin-top:-25px">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#"><img src="{% static 'imgs/logo2.png' %}" alt="logo"/></a>
+                    </div>
+                    <div class="navbar-collapse collapse " style="float: right;">
+                        <ul class="nav navbar-nav">
+                            <li class=""><a href="/">首页</a></li>
+                            <li><a href="http://www.hbstm.org.cn/">湖北省科技馆</a></li>
+                            <li><a href="http://www.whiob.ac.cn/">武汉植物园</a></li>
+                            <li><a href="http://mus.cug.edu.cn/">逸夫博物馆</a></li>
+                            <li><a href="http://www.ihb.ac.cn/">水生所</a></li>
+                            <li class="active"><a href="{% url 'front_search' %}">资源搜索</a></li>
+                            <li class=""><a href="{% url 'login' %}">后台</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+	        </header>
+                    <!-- Main content -->
+            <section class="content container-fluid">
+                <div class="row">
+                    <div class="col-md-4"></div>
+                    <div class="form-horizontal col-md-8">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">数据类别:</label>
+                            <div class="col-sm-10"><p class="form-control-static">[[data.label]]</p></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">展馆名称:</label>
+                            <div class="col-sm-10"><p class="form-control-static">[[data.venue]]</p></div>
+                        </div>
+                        <div class="form-group" v-for="item in table">
+                            <label class="col-sm-2 control-label">[[ item.name ]]</label>
+                            <div class="col-sm-10"><p class="form-control-static">[[item.value]]</p></div>
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+
+                </div>
+                <div class="row">
+                     <div class="col-md-2"></div>
+                     <div class="img_upload col-md-8" >
+
+                     </div>
+                </div>
+                <!--------------------------
+                      | Your Page Content Here |
+                      -------------------------->
+
+            </section>
+        </div>
+    </div>
+<script>
+let front_detail = new Vue({
+    el: "#front_detail",
+    delimiters: ["[[", "]]"],
+    data () {
+        return {
+            data: "",
+            imgList: [],
+            table: "",
+        }
+    },
+    methods: {
+
+    },
+    mounted(){
+        href = "/data/detail/{{ label }}/{{ venue }}/{{ item }}";
+        axios.all([axios.get("/table/{{ label }}"),axios.get(href)]).
+        then(axios.spread((table_response,data_response)=>{
+            this.table = table_response.data.data.table;
+            this.data = data_response.data.data;
+            this.table.forEach((table_item, index)=>{
+               table_item.value = this.data.item[table_item.remark];
+            });
+        }));
+    }
+})
+</script>
+</body>
+</html>

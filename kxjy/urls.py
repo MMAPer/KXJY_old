@@ -13,88 +13,29 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import json
-import time
 
-from bson import json_util
 from django.contrib import admin
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect
 from django.urls import include, path
-from common.utils import md5
-from common.auth import salt, cookie_auth
-from .settings import db
+from . import views
+
 
 #  要引入下面的，才能写视图函数
-import os, django
+# import os, django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
-django.setup()
-
-
-def login(request):
-    # 未登录用户执行以下登录操作
-    if request.method == 'POST':
-        result = {}
-        username = request.POST.get("username")
-        password = md5(request.POST.get("password"))
-        print(password)
-        user_collection = db.user
-        user = user_collection.find_one({'username': username, 'password': password})
-        if user:
-            token = md5(username + str(time.time()))
-            user['token'] = token
-            user_collection.update({'username': username, 'password': password}, user)
-            result['code'] = 20000
-            result['msg'] = '登录成功'
-            response = JsonResponse(result, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
-            response.set_cookie("username", username, expires=60 * 60 * 2)
-            response.set_cookie("token", token, expires=60 * 60 * 2)
-            return response
-    return render(request, 'login.html')  # 跳转到登录页面
-
-
-from common.auth import cookie_auth
-
-
-@cookie_auth
-def back_data(request):
-    context = {}
-    context["username"] = request.COOKIES.get("username")
-    return render(request, 'back/data/admin_data.html', context)
-
-
-def back_venue(request, class_name):
-    context = {}
-    context["username"] = request.COOKIES.get("username")
-    if class_name == "类别名称":
-        return render(request, "back/venue/admin_venue_label.html")
-    elif class_name == "包含场馆":
-        return render(request, "back/venue/admin_venue_venue.html")
-
-
-def back_user(request):
-    context = {}
-    context["username"] = request.COOKIES.get("username")
-    return render(request, 'back/user/admin_user.html', context)
-
-
-def back_search(request):
-    context = {}
-    context["username"] = request.COOKIES.get("username")
-    return render(request, 'back/search/admin_search.html')
-
-def front_index(request):
-    return render(request, 'front/index.html')
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+# django.setup()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', front_index),
-    path('login/', login, name='login'),
-    path('back/data/', back_data, name='back_data'),
-    path('back/venue/<class_name>', back_venue, name='back_venue'),
-    path('back/user/', back_user, name='back_user'),
-    path('back/search/', back_search, name='back_search'),
+    path('', views.front_index),
+    path('front/search', views.front_search, name='front_search'),
+    path('front/detail/<labelName>/<venueName>/<itemName>', views.getFrontDetailHtml),
+
+    path('login/', views.login, name='login'),
+    path('back/data/', views.back_data, name='back_data'),
+    path('back/venue/<class_name>', views.back_venue, name='back_venue'),
+    path('back/user/', views.back_user, name='back_user'),
+    # path('back/search/', back_search, name='back_search'),
     path('venue/', include('venue.urls')),  # 数据类别及包含场馆信息
     path('data/', include('data.urls')),  # 具体展品信息
     path('table/', include('table.urls')),  # 表格结构信息

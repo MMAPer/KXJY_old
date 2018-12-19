@@ -1,33 +1,69 @@
-{% extends 'back/admin_base.html' %}
 {% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>科学教育资源平台</title>
+    <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'dist/js/adminlte.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vue/vue.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vue/axios.min.js' %}"></script>
 
-    {% block extra_script %}
-        <script src="{% static 'plugins/select2/select2.full.min.js' %}"></script>
-    {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/AdminLTE.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'dist/css/skins/skin-blue.min.css' %}">
 
-    {% block extra_css  %}
-        <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2.min.css' %}">
-    {% endblock %}
+    <style>
+        [v-cloak]{display: none;}
+        th{text-align: center}
+        .navbar-default .navbar-nav > li > a {
+            font-size: 14px;
+            color: #fff;
+        }
 
-    {%block div_id %}admin_search{% endblock %}
-
-
-    {% block content %}
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <h1>
-                展品搜索
-            </h1>
-        </section>
-
-        <!-- Main content -->
-        <section class="content container-fluid">
+        .navbar-default .navbar-nav > li > a:hover {
+            color: deepskyblue;
+        }
+    </style>
+</head>
+<body>
+    <div id="front_search">
+        <div id="wrapper">
+        <!-- start header -->
+	        <header>
+                <div class="navbar navbar-default navbar-static-top"  style="background-color: #3c3c3c;margin-top:-25px">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#"><img src="{% static 'imgs/logo2.png' %}" alt="logo"/></a>
+                    </div>
+                    <div class="navbar-collapse collapse " style="float: right;">
+                        <ul class="nav navbar-nav">
+                            <li class=""><a href="/">首页</a></li>
+                            <li><a href="http://www.hbstm.org.cn/">湖北省科技馆</a></li>
+                            <li><a href="http://www.whiob.ac.cn/">武汉植物园</a></li>
+                            <li><a href="http://mus.cug.edu.cn/">逸夫博物馆</a></li>
+                            <li><a href="http://www.ihb.ac.cn/">水生所</a></li>
+                            <li class="active"><a href="{% url 'front_search' %}">资源搜索</a></li>
+                            <li class=""><a href="{% url 'login' %}">后台</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+	        </header>
             <div class="row">
-                <div class="col-md-2"></div>
+                <div class="col-md-3"></div>
                 <div class="form-inline col-md-8">
-                    <div class="form-group" style="margin-right: 20px">
+                    <div class="form-group" style="margin-right: 20px;">
                         <label for="venueName">展馆名称</label>
-                        <input type="text" class="form-control" id="venueName" v-model="venueName">
+                        <input type="text" class="form-control" id="venueName" v-model="venueName" >
                     </div>
                     <div class="form-group" style="margin-right: 20px">
                         <label for="itemName">展品名称</label>
@@ -39,7 +75,8 @@
             </div>
             <br />
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
                     <div class="box box-info">
                         <div class="box-body">
                             <div class="table-responsive" v-if="showStatus">
@@ -84,24 +121,16 @@
                   | Your Page Content Here |
                   -------------------------->
             </div>
-        </section>
-        <!-- /.content -->
-    {% endblock %}
+	    <!-- end header -->
+        </div>
+    </div>
 
-
-{% block end_script %}
 <script>
-    let admin_search = new Vue({
-        el:"#admin_search",
+    let front_search = new Vue({
+        el:"#front_search",
         delimiters: ["[[", "]]"],
         data(){
             return {
-                menu_search_active: true,
-                menu_data_active: false,
-                menu_venue_active: false,
-                menu_user_active: false,
-                menu_venue_label_active: false,
-                menu_venue_item_active: false,
                 venueName: "",
                 itemName: "",
                 showStatus: false,
@@ -128,7 +157,7 @@
                     {
                         this.datas = data.data;
                         this.datas.forEach((mydata, index)=>{
-                           mydata.href = "/data/detail/html/"+mydata.label+"/"+mydata.venue+"/"+mydata.item.name;
+                           mydata.href = "/front/detail/"+mydata.label+"/"+mydata.venue+"/"+mydata.item.name;
                         });
                         this.showStatus = true;
                     } else {
@@ -143,15 +172,16 @@
                             pageCurrent: 1,
                             totalCount: 1
                         };
-                    this.pagerData.page.totalCount = this.datas.length;
-                    this.getPageData(this.pagerData.page);
+                        this.pagerData.page.totalCount = this.datas.length;
+                        this.getPageData(this.pagerData.page);
+
                 });
             },
-            showPage: function (pageIndex) {
-                if (pageIndex > 0) {
-                    if(pageIndex>this.pagerData.page.pageCount) pageIndex = this.page.pageCount;
-                    this.getPageData({pageCurrent:pageIndex,pageSize:this.pageSize});//事件
-                }
+                    showPage: function (pageIndex) {
+                    if (pageIndex > 0) {
+                        if(pageIndex>this.pagerData.page.pageCount) pageIndex = this.page.pageCount;
+                        this.getPageData({pageCurrent:pageIndex,pageSize:this.pageSize});//事件
+                    }
                 },
             sortBy: function (sortparam) {
                         this.sortparam = sortparam;
@@ -200,4 +230,5 @@
 
     });
 </script>
-{% endblock %}
+</body>
+</html>

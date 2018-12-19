@@ -65,8 +65,72 @@
                       | Your Page Content Here |
                       -------------------------->
                 </div>
+                <div class="pager" id="pager" >
+                    <span class="btn btn-default" @click="showPage(1)">首页</span>
+                    <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent-1)">上一页</span>
+                    <span class="form-inline">
+                    <input class="form-control" style="width:60px;text-align:center" type="text" v-model="pagerData.page.pageCurrent" @keyup.enter="showPage(pagerData.page.pageCurrent)" />
+                    </span>
+                    <span>共[[pagerData.page.pageCount]]页</span>
+                    <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent+1)">下一页</span>
+                    <span class="btn btn-default" @click="showPage(pagerData.page.pageCount)">尾页</span>
+                    <span>共[[pagerData.page.totalCount]]条数据，当前显示第[[startData]]-[[endData]]条记录</span>
+                </div>
             </div>
         </section>
+
+        <div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-labelledby="modifyUser">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modifyUser">修改用户信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txt_labelName">用户名</label>
+                        <input type="text" name="modify_labelName" class="form-control" id="modify_labelName" v-model="modify_labelName" placeholder="请输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_labelName">密码</label>
+                        <input type="text" name="modify_labelName" class="form-control" id="modify_labelName" v-model="modify_labelName" placeholder="请输入密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="txt_labelName">用户角色</label>
+                        <select>
+                            <option>管理员</option>
+                            <option>数据录入员</option>
+                            <option>管理员</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <button type="button" id="modify_submit" @click="modifySubmit(modify_origin_labelName,modify_labelName)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认修改</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="addUser">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modifyLabel">添加数据类别</h4>
+                    </div>
+                    <div class="modal-body">
+                    <div class="form-group">
+                        <label for="txt_departmentname">类别名称</label>
+                        <input type="text" name="add_labelName" class="form-control" id="add_labelName" v-model="add_labelName" placeholder="类别名称">
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                    <button type="button" id="add_submit" @click="addSubmit(add_labelName)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认添加</button>
+                </div>
+                </div>
+            </div>
+        </div>
         <!-- /.content -->
     {% endblock %}
 
@@ -84,15 +148,148 @@
                 menu_user_active: true,
                 menu_venue_label_active: false,
                 menu_venue_item_active: false,
-                users: []
+                users: [],
+                pagerData: {
+                    data: [],
+                    page: {
+                        arrPageSize: [10, 20, 30],
+                        pageSize: 10,
+                        pageCount: 1,
+                        pageCurrent: 1,
+                        totalCount: 1
+                    }
+                },
+                sortparam: "",
+                sorttype: 1
             }
         },
         mounted(){
             axios.get("/user").then(response=>{
                 data = response.data.data;
                 this.users = data;
+                this.pagerData.page = {
+                    arrPageSize: [10, 20, 30],
+                    pageSize: 10,
+                    pageCount: 1,
+                    pageCurrent: 1,
+                    totalCount: 1
+                };
+                this.pagerData.page.totalCount = this.users.length;
+                this.getPageData(this.pagerData.page);
             })
-        }
+        },
+        methods:{
+            addUser(){
+                $('#add').modal();
+            },
+            addSubmit(label){
+               axios({
+                       url: "/venue/label/add/",
+                       method: "POST",
+                       data: {"label":label},
+                       transformRequest: [function (data) {
+                           let ret = '';
+                           for (let it in data) {
+                               ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
+                           }
+                           return ret;
+                       }]}).then(response => {
+                    res = response.data;
+                    if (res.code == 20000) {
+                        window.location.reload();
+                    } else if (res.code == 20003) {
+                        alert("您没有操作权限");
+                    }
+                });
+            },
+            modifyLabel(label){
+                this.modify_origin_labelName = label;
+                this.modify_labelName = label;
+                $('#modify').modal();
+            },
+            modifySubmit(originLabel, label){
+                axios.delete("/venue/label/modify/" + originLabel + "/" + label).then(response => {
+                    res = response.data;
+                    if (res.code == 20000) {
+                        window.location.reload();
+                    } else if (res.code == 20003) {
+                        alert("您没有操作权限");
+                    }
+                });
+            },
+            deleteLabel(label){
+                swal({
+                    title: "操作提示",
+                    text: "确定删除该类别吗？",
+                    type: "warning",
+                    showCancelButton: true,
+                    confimButtonColor: "#DD6B55",
+                    cancelButtonText: "取消",
+                    confirmButtonText: "是的，确定删除！",
+                    closeOnConfirm: true
+                }).then((isConfirm) => {
+                    if(isConfirm){
+                        axios.delete("/venue/label/delete/" + label).then(response => {
+                            res = response.data;
+                            if (res.code == 20000) {
+                                window.location.reload();
+                            } else if (res.code == 20003) {
+                                alert("您没有操作权限")
+                            }
+                        });
+                    }
+                });
+            },
+            showPage: function (pageIndex) {
+                if (pageIndex > 0) {
+                    if(pageIndex>this.pagerData.page.pageCount) pageIndex = this.page.pageCount;
+                    this.getPageData({pageCurrent:pageIndex,pageSize:this.pageSize});//事件
+                }
+                },
+            sortBy: function (sortparam) {
+                        this.sortparam = sortparam;
+                        this.sorttype = this.sorttype == -1 ? 1 : -1;
+                    },
+            getPageData: function(page) {
+                    this.pagerData.page.pageSize = page.pageSize;
+                    this.pagerData.page.pageCurrent = page.pageCurrent;
+                    this.pagerData.page.pageCount = Math.ceil(this.pagerData.page.totalCount / this.pagerData.page.pageSize);// 修改分页信息
+                    let newPageInfo = [];
+                    for (let i = 0; i < page.pageSize; i++) {
+                        let index =i+(page.pageCurrent-1)*page.pageSize;
+                        if(index>this.pagerData.page.totalCount-1)break;
+                            newPageInfo[newPageInfo.length] = this.users[index];
+                    }
+                    this.pagerData.data = newPageInfo; // 修改分页数据
+            }
+        },
+        //计算属性
+        computed:{
+            // 分页大小 获取的时候显示父级传入的，修改的时候修改自身的。子组件不能修改父元素的值
+            pageSize:{
+                get:function(){
+                    return this.pagerData.page.pageSize;
+                },
+                set:function(value){
+                    this.pagerData.page.pageSize = value;
+                }
+            },
+            pageCurrent:{
+                get:function(){
+                    return this.pagerData.page.pageCurrent;
+                },
+                set:function(value){
+                    this.pagerData.page.pageCurrent = value;
+                }
+            },
+            startData:function(){
+                return this.pagerData.page.pageSize*(this.pagerData.page.pageCurrent-1)+1;
+            },
+            endData:function(){
+                let max =this.pagerData.page.pageSize*this.pagerData.page.pageCurrent;
+                return max>this.pagerData.page.totalCount?this.pagerData.page.totalCount:max;
+            }
+        },
     });
 </script>
 {% endblock %}
