@@ -11,51 +11,36 @@
         <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert/sweetalert2.min.css' %}">
     {% endblock %}
 
-    {%block div_id %}admin_data_add{% endblock %}
+    {%block div_id %}admin_data_update{% endblock %}
 
 
     {% block content %}
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>
-                数据添加
+                数据修改
             </h1>
         </section>
-
         <!-- Main content -->
         <section class="content container-fluid">
             <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>类别名称</label>
-                        <select class="form-control" style="width:90%;" v-model="selectLabelName" @change="changeLabelName">
-                            <option v-for="label in labelName" :value="label" style="text-align: center;" v-cloak>[[ label ]]</option>
-                        </select>
-                    </div>
+                <div class="col-md-2">
                 </div>
-                <div class="col-md-4">
+                <div class="form-horizontal col-md-10">
                     <div class="form-group">
-                        <label>场馆名称</label>
-                        <select class="form-control" style="width:90%;" tabindex="-1"
-                                aria-hidden="true" v-model="selectVenueName">
-                            <option v-for="item in showVenueName" :value="item">[[ item ]]</option>
-                        </select>
+                        <label class="col-sm-2 control-label">数据类别:</label>
+                        <div class="col-sm-10"><p class="form-control-static">[[data.label]]</p></div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2"></div>
-                <div class="form-horizontal col-md-8">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">展馆名称:</label>
+                        <div class="col-sm-10"><p class="form-control-static">[[data.venue]]</p></div>
+                    </div>
+
                     <div class="form-group" v-for="item in table">
-                        <label :for="item.remark" class="col-sm-2 control-label">[[ item.name ]]</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" :id="item.remark" v-model="item.value">
-                        </div>
+                        <label class="col-sm-2 control-label">[[ item.name ]]</label>
+                        <div class="col-sm-10"><input type="text" class="form-control" :id="item.remark" v-model="item.value"></div>
                     </div>
-                </div>
-                <div class="col-md-2"></div>
-            </div>
+
             <div class="row">
                  <div class="col-md-2"></div>
                  <div class="img_upload col-md-8" >
@@ -86,7 +71,9 @@
             </div>
             <div class="row" style="margin-top: 10px">
                 <div class="col-md-2"></div>
-                <button type="button" id="submitData" class="btn btn-primary" @click="submitData">提交数据</button>
+                <button type="button" class="btn btn-primary" id="submitData" @click="submitData">提交数据</button>
+            </div>
+                </div>
             </div>
             <!--------------------------
                   | Your Page Content Here |
@@ -99,8 +86,8 @@
 
 {% block end_script %}
 <script>
-let admin_data_add = new Vue({
-    el: "#admin_data_add",
+let admin_data_update = new Vue({
+    el: "#admin_data_update",
     delimiters: ["[[", "]]"],
     data () {
         return {
@@ -109,50 +96,13 @@ let admin_data_add = new Vue({
             menu_user_active: false,
             menu_venue_label_active: false,
             menu_venue_item_active: false,
-            venues: "",
-            labelName: [],
-            venueName: [],
-            showVenueName: [],
-            selectLabelName: "",
-            selectVenueName: "",
+            data: "",
             imgList: [],
             size: 0,
             table: "",
-            submit: ""
         }
     },
-    mounted(){
-        axios.get("/venue").then(venue_response=>{
-            this.venues = venue_response.data.data;
-            this.venues.forEach((label, index)=>{
-                this.labelName.push(label["label"]);
-                this.venueName.push(label["venues"]);
-            });
-            this.showVenueName = this.venueName[0];
-            this.selectLabelName = this.labelName[0];
-            this.selectVenueName = this.showVenueName[0];
-            this.getTable();
-        });
-    },
     methods: {
-        changeLabelName(){
-            this.venues.forEach((label, index)=>{
-                if(label.label == this.selectLabelName){
-                    this.showVenueName = this.venueName[index];
-                    this.selectVenueName = this.showVenueName[0];
-                }
-            });
-            this.getTable();
-        },
-        getTable(){
-            axios.get("/table/"+this.selectLabelName).
-            then(table_response=>{
-                this.table = table_response.data.data.table;
-                this.table.forEach((table_item, index)=>{
-                    table_item.value = "";
-                });
-            });
-        },
         fileClick(){
             document.getElementById('upload_file').click()
         },
@@ -210,8 +160,8 @@ let admin_data_add = new Vue({
                 {
                     data_obj.append("imgList[]", this.imgList[i].file);
                 }
-                data_obj.append("label", this.selectLabelName);
-                data_obj.append("venue", this.selectVenueName);
+                data_obj.append("label", this.data.label);
+                data_obj.append("venue", this.data.venue);
                 data_obj.append("videoList", []);
 {#                data_obj = {#}
 {#                    label: this.selectLabelName,#}
@@ -226,7 +176,7 @@ let admin_data_add = new Vue({
                 data_obj.append("item", JSON.stringify(data_obj_item));
                 $('#submitData').prop('disabled', true);
                $.ajax({
-                   url:"/data/add",
+                   url:"/data/updata/{{ label }}/{{ venue }}/{{ item }}",
                    type: "post",
                    data: data_obj,
                    cache: false,
@@ -237,7 +187,7 @@ let admin_data_add = new Vue({
                         swal("信息提示", "上传成功！", "success");
                         this.imgList = [];
                         this.table.forEach((table_item, index)=>{
-                            table_item[table_item.remark] = "";
+                            table_item.value = "";
                         });
                    }
                })
@@ -261,6 +211,18 @@ let admin_data_add = new Vue({
             }
             return check;
         }
+    },
+    mounted(){
+        href = "/data/detail/{{ label }}/{{ venue }}/{{ item }}";
+        axios.all([axios.get("/table/{{ label }}"),axios.get(href)]).
+        then(axios.spread((table_response,data_response)=>{
+            this.table = table_response.data.data.table;
+            this.data = data_response.data.data;
+{#            this.imgList = this.data.imgList;#}
+            this.table.forEach((table_item, index)=>{
+               table_item.value = this.data.item[table_item.remark];
+            });
+        }));
     }
 })
 </script>

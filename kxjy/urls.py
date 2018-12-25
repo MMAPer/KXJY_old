@@ -13,10 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from . import views
+from . import views, settings
 
 
 #  要引入下面的，才能写视图函数
@@ -32,15 +32,16 @@ urlpatterns = [
     path('front/detail/<labelName>/<venueName>/<itemName>', views.getFrontDetailHtml),
 
     path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
     path('back/data/', views.back_data, name='back_data'),
-    path('back/venue/<class_name>', views.back_venue, name='back_venue'),
+    path('back/venue', views.back_venue, name='back_venue'),
     path('back/user/', views.back_user, name='back_user'),
     # path('back/search/', back_search, name='back_search'),
     path('venue/', include('venue.urls')),  # 数据类别及包含场馆信息
     path('data/', include('data.urls')),  # 具体展品信息
     path('table/', include('table.urls')),  # 表格结构信息
     path('user/', include('user.urls')),  # 用户信息
-]
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 """
 1.url映射：

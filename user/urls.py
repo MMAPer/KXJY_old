@@ -8,4 +8,7 @@ app_name = 'user'
 
 urlpatterns = [
     path('', views.getUsers, name='index'),
+    path('add/', views.addUser),
+    path('delete/<username>', views.deleteUser),
+    path('update/<username>', views.updateUser),
 ]

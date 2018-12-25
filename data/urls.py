@@ -12,4 +12,10 @@ urlpatterns = [
     path('search', views.searchData),
     path('detail/html/<labelName>/<venueName>/<itemName>', views.getDetailHtml),
     path('detail/<labelName>/<venueName>/<itemName>', views.getDetailData),
+    path('delete/<labelName>/<venueName>/<itemName>', views.deleteData),
+    path('update/html/<labelName>/<venueName>/<itemName>', views.getUpdateDataHtml),
+    path('update/<labelName>/<venueName>/<itemName>', views.updateData),
+    path('add/html/get', views.getAddDataHtml),
+    path('add', views.addData),
+
 ]

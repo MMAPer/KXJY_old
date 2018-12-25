@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from common.utils import md5
 from common.auth import salt, cookie_auth
+from kxjy.status import StatusCode
 from .settings import db
 
 
@@ -17,6 +18,10 @@ def login(request):
         print(password)
         user_collection = db.user
         user = user_collection.find_one({'username': username, 'password': password})
+        if user['role']=='普通用户':
+            result = StatusCode.ACCESSERROR()
+            response = JsonResponse(result, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
+            return response
         if user:
             token = md5(username + str(time.time()))
             user['token'] = token
@@ -30,6 +35,13 @@ def login(request):
     return render(request, 'login.html')  # 跳转到登录页面
 
 
+def logout(request):
+    response = redirect('/login')
+    response.delete_cookie('token')
+    response.delete_cookie('username')
+    return response
+
+
 # 渲染后台数据管理页面
 @cookie_auth
 def back_data(request):
@@ -40,12 +52,13 @@ def back_data(request):
 
 # 渲染后台数据类别管理页面
 @cookie_auth
-def back_venue(request, class_name):
+def back_venue(request):
+    typeName = request.GET.get("typeName")
     context = {}
     context["username"] = request.COOKIES.get("username")
-    if class_name == "类别名称":
+    if typeName == "类别名称":
         return render(request, "back/venue/admin_venue_label.html")
-    elif class_name == "包含场馆":
+    elif typeName == "包含场馆":
         return render(request, "back/venue/admin_venue_venue.html")
 
 

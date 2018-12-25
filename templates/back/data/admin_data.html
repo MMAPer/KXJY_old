@@ -1,6 +1,12 @@
 {% extends 'back/admin_base.html' %}
 {% load staticfiles %}
+    {% block extra_script %}
+        <script src="{% static 'plugins/sweetalert/sweetalert2.min.js' %}"></script>
+    {% endblock %}
 
+    {% block extra_css  %}
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert/sweetalert2.min.css' %}">
+    {% endblock %}
 
     {%block div_id %}admin_data{% endblock %}
 
@@ -11,7 +17,7 @@
             <h1>
                 数据管理
                 <small>
-                    <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px">
+                    <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px" @click="window.location.href='/data/add/html/get'">
                         {#                    <span class="glyphicon glyphicon-ok">&nbsp;</span>#}
                         添加数据
                     </button>
@@ -22,7 +28,7 @@
         <!-- Main content -->
         <section class="content container-fluid">
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label>类别名称</label>
                         <select class="form-control" style="width:90%;" v-model="selectLabelName" @change="changeLabelName">
@@ -30,7 +36,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label>场馆名称</label>
                         <select class="form-control" style="width:90%;" tabindex="-1"
@@ -38,6 +44,15 @@
                             <option v-for="item in showVenueName" :value="item">[[ item ]]</option>
                         </select>
                     </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group" style="margin-right: 20px">
+                        <label for="itemName">展品名称</label>
+                        <input type="text" class="form-control" id="itemName" v-model="itemName">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                     <button type="submit" style="margin-top: 24px" class="btn btn-primary" @click="searchData">搜索</button>
                 </div>
             </div>
             <div>
@@ -69,8 +84,8 @@
                                                 <td>[[ data.venue ]]</td>
                                                 <td>[[ data.item.content ]]</td>
                                                 <td>[[ data.item.room ]]</td>
-                                                <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
-                                                <button class="btn btn-danger">删除</button></td>
+                                                <td><button class="btn btn-primary" style="margin-right: 10px;" @click="window.location.href='/data/update/html/'+data.label+'/'+data.venue+'/'+data.item.name">修改</button>
+                                                <button class="btn btn-danger" @click="deleteData(data.label, data.venue, data.item.name)">删除</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -123,6 +138,7 @@ let admin_data = new Vue({
             showVenueName: [],
             selectLabelName: "",
             selectVenueName: "",
+            itemName: "",
             datas: "",
             pagerData: {
                 data: [],
@@ -153,10 +169,35 @@ let admin_data = new Vue({
                 this.pagerData.page.totalCount = this.datas.length;
                 this.getPageData(this.pagerData.page);
             });
-        }
-        );
+        });
     },
     methods: {
+        searchData(){
+            axios.get('/data/search?venue='+this.selectVenueName+'&item='+this.itemName).then(response=>{
+                data = response.data;
+                if(data.length!=0)
+                {
+                    this.datas = data.data;
+                    this.datas.forEach((mydata, index)=>{
+                       mydata.href = "/data/detail/html/"+mydata.label+"/"+mydata.venue+"/"+mydata.item.name;
+                    });
+                    this.showStatus = true;
+                } else {
+                    alert("未查询到相关信息");
+                    this.datas = [];
+                    this.showStatus = false;
+                }
+                this.pagerData.page = {
+                        arrPageSize: [10, 20, 30],
+                        pageSize: 10,
+                        pageCount: 1,
+                        pageCurrent: 1,
+                        totalCount: 1
+                    };
+                this.pagerData.page.totalCount = this.datas.length;
+                this.getPageData(this.pagerData.page);
+                });
+        },
         changeLabelName: function(){
             this.venues.forEach((label, index)=>{
                 if(label.label == this.selectLabelName){
@@ -204,7 +245,30 @@ let admin_data = new Vue({
                 this.pagerData.data.forEach((datas_item, item)=>{
                    datas_item.href = "/data/detail/html/"+datas_item.label+"/"+datas_item.venue+"/"+datas_item.item.name;
                 });
-        }
+        },
+        deleteData(labelName, venueName, itemName){
+            swal({
+                title: "操作提示",
+                text: "确定删除该数据吗？",
+                type: "warning",
+                showCancelButton: true,
+                confimButtonColor: "#DD6B55",
+                cancelButtonText: "取消",
+                confirmButtonText: "是的，确定删除！",
+                closeOnConfirm: true
+            }).then((isConfirm) => {
+                if(isConfirm){
+                    axios.delete("/data/delete/" + labelName+"/"+venueName+"/"+itemName).then(response => {
+                        res = response.data;
+                        if (res.code == 20000) {
+                            window.location.reload();
+                        } else if (res.code == 20003) {
+                            alert("您没有操作权限")
+                        }
+                    });
+                }
+            });
+            },
     },
     //计算属性
     computed:{

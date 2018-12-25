@@ -109,7 +109,10 @@
                         if(response.data.code==20000)
                         {
                             window.location.href = '/back/data';
-                        } else {
+                        }else if(response.data.code==20003){
+                            alert(response.data.msg);
+                        }
+                        else {
                             alert("用户名或密码错误");
                         }
                     }).catch(e=>{

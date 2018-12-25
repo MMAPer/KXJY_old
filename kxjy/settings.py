@@ -127,3 +127,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')  # media即为图片上传的根路径
+MEDIA_URL = '/media/'
+
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50*1024*1024

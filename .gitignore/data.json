@@ -20,10 +20,10 @@ obj3={
 				"status": 1
 };
 
-user1={
+user={
 	"username":"kxjy",
 	"password":"a54e252fb2ff42d5aee104c73c6de846",
-	"role":"超级管理员",
+	"role":"管理员",
 };
 
 data1={

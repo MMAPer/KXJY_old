@@ -2,11 +2,12 @@
 {% load staticfiles %}
 
     {% block extra_script %}
-
+        <script src="{% static 'plugins/md5/md5.js' %}"></script>
+        <script src="{% static 'plugins/sweetalert/sweetalert2.min.js' %}"></script>
     {% endblock %}
 
     {% block extra_css  %}
-
+        <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert/sweetalert2.min.css' %}">
     {% endblock %}
 
     {%block div_id %}admin_user{% endblock %}
@@ -18,7 +19,7 @@
             <h1>
                 用户管理
                 <small>
-                    <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px">
+                    <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px" @click="addUser">
                         {#                    <span class="glyphicon glyphicon-ok">&nbsp;</span>#}
                         添加用户
                     </button>
@@ -52,8 +53,8 @@
                                                 <td><span>[[ index+1 ]]</span></td>
                                                 <td><span>[[ user.username ]]</span></td>
                                                 <td><span>[[ user.role ]]</span></td>
-                                                <td><button class="btn btn-primary" style="margin-right: 10px;">修改</button>
-                                                    <button class="btn btn-danger">删除</button></td>
+                                                <td><button class="btn btn-primary" style="margin-right: 10px;" @click="modifyUser(user)">修改</button>
+                                                    <button class="btn btn-danger" @click="deleteUser(user.username)">删除</button></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -83,30 +84,29 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="modifyUser">修改用户信息</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="txt_labelName">用户名</label>
-                        <input type="text" name="modify_labelName" class="form-control" id="modify_labelName" v-model="modify_labelName" placeholder="请输入用户名">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="modifyUser">修改用户信息</h4>
                     </div>
-                    <div class="form-group">
-                        <label for="txt_labelName">密码</label>
-                        <input type="text" name="modify_labelName" class="form-control" id="modify_labelName" v-model="modify_labelName" placeholder="请输入密码">
-                    </div>
-                    <div class="form-group">
-                        <label for="txt_labelName">用户角色</label>
-                        <select>
-                            <option>管理员</option>
-                            <option>数据录入员</option>
-                            <option>管理员</option>
-                        </select>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="modify_userName">用户名</label>
+                            <input type="text" name="modify_userName" class="form-control" id="modify_userName" v-model="modify_user.username"  placeholder="请输入用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="modify_password">密码</label>
+                            <input type="password" name="modify_password" class="form-control" id="modify_password" v-model="modify_user.password" placeholder="请输入密码">
+                        </div>
+                        <div class="form-group">
+                            <label for="modify_role">用户角色</label>
+                            <select id="modify_role" v-model="modify_user.role">
+                                <option  v-for="role in roles" :value="role">[[ role ]]</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
-                    <button type="button" id="modify_submit" @click="modifySubmit(modify_origin_labelName,modify_labelName)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认修改</button>
+                    <button type="button" id="modify_submit" @click="modifySubmit(modify_origin_userName,modify_user)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认修改</button>
                 </div>
             </div>
         </div>
@@ -116,18 +116,28 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="modifyLabel">添加数据类别</h4>
+                        <h4 class="modal-title" id="addUser">添加用户</h4>
                     </div>
                     <div class="modal-body">
-                    <div class="form-group">
-                        <label for="txt_departmentname">类别名称</label>
-                        <input type="text" name="add_labelName" class="form-control" id="add_labelName" v-model="add_labelName" placeholder="类别名称">
+                        <div class="form-group">
+                            <label for="add_userName">用户名</label>
+                            <input type="text" name="modify_userName" class="form-control" id="add_userName" v-model="add_user.username" placeholder="请输入用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="add_password">密码</label>
+                            <input type="text" name="modify_password" class="form-control" id="add_password" v-model="add_user.password" placeholder="请输入密码">
+                        </div>
+                        <div class="form-group">
+                            <label for="add_role">用户角色</label>
+                            <select id="add_role" v-model="add_user.role">
+                                <option  v-for="role in roles" :value="role">[[ role ]]</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
-                    <button type="button" id="add_submit" @click="addSubmit(add_labelName)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认添加</button>
-                </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
+                        <button type="button" id="add_submit" @click="addSubmit()" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认添加</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -149,6 +159,7 @@
                 menu_venue_label_active: false,
                 menu_venue_item_active: false,
                 users: [],
+                roles:["管理员", "数据录入员", "普通用户"],
                 pagerData: {
                     data: [],
                     page: {
@@ -160,7 +171,10 @@
                     }
                 },
                 sortparam: "",
-                sorttype: 1
+                sorttype: 1,
+                add_user: {"username":"", "password":"", "role":"管理员"},
+                modify_origin_userName: "",
+                modify_user: {"username":"", "password":"", "role":""},
             }
         },
         mounted(){
@@ -182,11 +196,14 @@
             addUser(){
                 $('#add').modal();
             },
-            addSubmit(label){
-               axios({
-                       url: "/venue/label/add/",
+            addSubmit(){
+                this.add_user.password = hex_md5(this.add_user.password);
+                axios({
+                       url: "/user/add/",
                        method: "POST",
-                       data: {"label":label},
+                       data: {
+                           "user":JSON.stringify(this.add_user),
+                       },
                        transformRequest: [function (data) {
                            let ret = '';
                            for (let it in data) {
@@ -202,25 +219,10 @@
                     }
                 });
             },
-            modifyLabel(label){
-                this.modify_origin_labelName = label;
-                this.modify_labelName = label;
-                $('#modify').modal();
-            },
-            modifySubmit(originLabel, label){
-                axios.delete("/venue/label/modify/" + originLabel + "/" + label).then(response => {
-                    res = response.data;
-                    if (res.code == 20000) {
-                        window.location.reload();
-                    } else if (res.code == 20003) {
-                        alert("您没有操作权限");
-                    }
-                });
-            },
-            deleteLabel(label){
+            deleteUser(username){
                 swal({
                     title: "操作提示",
-                    text: "确定删除该类别吗？",
+                    text: "确定删除该用户吗？",
                     type: "warning",
                     showCancelButton: true,
                     confimButtonColor: "#DD6B55",
@@ -229,7 +231,7 @@
                     closeOnConfirm: true
                 }).then((isConfirm) => {
                     if(isConfirm){
-                        axios.delete("/venue/label/delete/" + label).then(response => {
+                        axios.delete("/user/delete/" + username).then(response => {
                             res = response.data;
                             if (res.code == 20000) {
                                 window.location.reload();
@@ -237,6 +239,21 @@
                                 alert("您没有操作权限")
                             }
                         });
+                    }
+                });
+            },
+            modifyUser(user){
+                this.modify_origin_userName = user.username;
+                this.modify_user = user;
+                $('#modify').modal();
+            },
+            modifySubmit(modify_origin_userName, user){
+                axios.post("/user/update/" + modify_origin_userName).then(response => {
+                    res = response.data;
+                    if (res.code == 20000) {
+                        window.location.reload();
+                    } else if (res.code == 20003) {
+                        alert("您没有操作权限");
                     }
                 });
             },

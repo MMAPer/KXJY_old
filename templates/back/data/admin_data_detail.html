@@ -15,12 +15,12 @@
                 数据详情
             </h1>
         </section>
-
         <!-- Main content -->
         <section class="content container-fluid">
             <div class="row">
-                <div class="col-md-2"></div>
-                <div class="form-horizontal col-md-8">
+                <div class="col-md-2">
+                </div>
+                <div class="form-horizontal col-md-10">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">数据类别:</label>
                         <div class="col-sm-10"><p class="form-control-static">[[data.label]]</p></div>
@@ -33,15 +33,17 @@
                         <label class="col-sm-2 control-label">[[ item.name ]]</label>
                         <div class="col-sm-10"><p class="form-control-static">[[item.value]]</p></div>
                     </div>
+                    <div class="form-group" v-show="imgList.length!=0" >
+                        <label class="col-sm-2 control-label">图片展示</label>
+                        <div class="col-sm-10">
+                            <div class="warp_img" v-show="imgList.length!=0" >
+                                <div class="warp_img_div" style="float:left;margin-right:10px" v-for="(item,index) of imgList" >
+                                    <img :src="item" style="width:200px;height:150px">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-2"></div>
-
-            </div>
-            <div class="row">
-                 <div class="col-md-2"></div>
-                 <div class="img_upload col-md-8" >
-
-                 </div>
             </div>
             <!--------------------------
                   | Your Page Content Here |
@@ -59,8 +61,7 @@ let admin_data_detail = new Vue({
     delimiters: ["[[", "]]"],
     data () {
         return {
-            menu_search_active: true,
-            menu_data_active: false,
+            menu_data_active: true,
             menu_venue_active: false,
             menu_user_active: false,
             menu_venue_label_active: false,
@@ -79,6 +80,7 @@ let admin_data_detail = new Vue({
         then(axios.spread((table_response,data_response)=>{
             this.table = table_response.data.data.table;
             this.data = data_response.data.data;
+            this.imgList = this.data.imgList;
             this.table.forEach((table_item, index)=>{
                table_item.value = this.data.item[table_item.remark];
             });
