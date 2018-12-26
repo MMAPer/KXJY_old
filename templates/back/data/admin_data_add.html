@@ -233,11 +233,11 @@ let admin_data_add = new Vue({
                    processData: false,   // 告诉jQuery不要处理数据
                    contentType: false,   // 告诉jQuery不要设置类型
                    success: (response)=>{
-                        $('#submitData').prop('false', false);
+                        $('#submitData').prop('disabled', false);
                         swal("信息提示", "上传成功！", "success");
                         this.imgList = [];
                         this.table.forEach((table_item, index)=>{
-                            table_item[table_item.remark] = "";
+                            table_item.value = "";
                         });
                    }
                })

@@ -26,9 +26,8 @@ from . import views, settings
 # django.setup()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.front_index),
-    path('front/search', views.front_search, name='front_search'),
+    path('front/search/', views.front_search, name='front_search'),
     path('front/detail/<labelName>/<venueName>/<itemName>', views.getFrontDetailHtml),
 
     path('login/', views.login, name='login'),
@@ -36,7 +35,6 @@ urlpatterns = [
     path('back/data/', views.back_data, name='back_data'),
     path('back/venue', views.back_venue, name='back_venue'),
     path('back/user/', views.back_user, name='back_user'),
-    # path('back/search/', back_search, name='back_search'),
     path('venue/', include('venue.urls')),  # 数据类别及包含场馆信息
     path('data/', include('data.urls')),  # 具体展品信息
     path('table/', include('table.urls')),  # 表格结构信息

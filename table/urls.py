@@ -8,4 +8,5 @@ app_name = 'table'
 #  数据层级：label->venue->item
 urlpatterns = [
     path('<labelName>', views.getTableByLabelName),
+    path('add/', views.addTable),
 ]

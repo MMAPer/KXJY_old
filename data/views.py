@@ -4,27 +4,39 @@ import os
 from bson import json_util
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.utils import timezone
-from pip._vendor.distlib.resources import Resource
 
+from common.auth import cookie_auth, permission_auth
+from common.status import StatusCode
 from kxjy import settings
-from kxjy.settings import db, MEDIA_ROOT
-from kxjy.status import StatusCode
+from kxjy.settings import db
+
 
 # Create your views here.
 
 # 获取所有数据
+@cookie_auth
 def getDatas(request):
-    res = {}
+    res = StatusCode.OK()
     data_collection = db.data
     datas = list(data_collection.find())
     res["data"] = datas
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 
+# 获取指定类别下面的展品数据
+@cookie_auth
+def getDataByLabel(request, labelName):
+    res = StatusCode.OK()
+    data_collection = db.data
+    datas = list(data_collection.find({"label": labelName}))
+    res["data"] = datas
+    return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
+
+
 # 获取指定类别指定场馆下面的展品数据
+@cookie_auth
 def getDataByLabelAndName(request, labelName, venueName):
-    res = {}
+    res = StatusCode.OK()
     data_collection = db.data
     datas = list(data_collection.find({"label": labelName, "venue": venueName}))
     res["data"] = datas
@@ -32,10 +44,11 @@ def getDataByLabelAndName(request, labelName, venueName):
 
 
 # 搜索数据（参数：展馆名称，展品名称）
-def searchData(request):
+@cookie_auth
+def searchData(request, venueName, itemName):
     res = StatusCode.OK()
-    venueName = request.GET.get("venue")  # 展馆名称
-    itemName = request.GET.get("item")  # 展品名称
+    # venueName = request.GET.get("venue")  # 展馆名称
+    # itemName = request.GET.get("item")  # 展品名称
     data_collection = db.data
     datas = list(data_collection.find({"venue": {"$regex": venueName}, "item.name": {"$regex": itemName}}))
     res['length'] = len(datas)
@@ -44,6 +57,7 @@ def searchData(request):
 
 
 #  渲染数据详情页
+@cookie_auth
 def getDetailHtml(request, labelName, venueName, itemName):
     context = {}
     context['label'] = labelName
@@ -53,6 +67,7 @@ def getDetailHtml(request, labelName, venueName, itemName):
 
 
 #  获取数据详情
+@cookie_auth
 def getDetailData(request, labelName, venueName, itemName):
     res = StatusCode.OK()
     data_collection = db.data
@@ -61,6 +76,8 @@ def getDetailData(request, labelName, venueName, itemName):
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 
+@cookie_auth
+@permission_auth
 def deleteData(request, labelName, venueName, itemName):
     res = StatusCode.OK()
     data_collection = db.data
@@ -68,10 +85,13 @@ def deleteData(request, labelName, venueName, itemName):
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 #  渲染添加数据页面
+@cookie_auth
 def getAddDataHtml(request):
     return render(request, 'back/data/admin_data_add.html')
 
 
+@cookie_auth
+@permission_auth
 def addData(request):
     res = StatusCode.OK()
     data = {}
@@ -104,6 +124,7 @@ def addData(request):
 
 
 # 渲染数据修改页面
+@cookie_auth
 def getUpdateDataHtml(request, labelName, venueName, itemName):
     context = {}
     context['label'] = labelName
@@ -112,6 +133,8 @@ def getUpdateDataHtml(request, labelName, venueName, itemName):
     return render(request, 'back/data/admin_data_update.html', context)
 
 
+@cookie_auth
+@permission_auth
 def updateData(request, labelName, venueName, itemName):
     res = StatusCode.OK()
     data = {}
@@ -119,14 +142,17 @@ def updateData(request, labelName, venueName, itemName):
     venueName = request.POST.get("venue")
     item = request.POST.get("item")
     item = json.loads(item)
-    print(item)
-    #  ri!! 踩了好多坑：前端：let data_obj = new FormData();
-    #             for(i=0; i<this.imgList.length; i++)
-    #             {
-    #                 data_obj.append("imgList[]", this.imgList[i].file);
-    #             }
+    imgOldList = json.loads(request.POST.get("imgOldList"))
+    # #  ri!! 踩了好多坑：前端：let data_obj = new FormData();
+    # #            j for(i=0; i<this.imgList.length; i++)
+    # #             {
+    # #                 data_obj.append("imgList[]", this.imgList[i].file);
+    # #             }
+    #
     imgList = request.FILES.getlist("imgList[]")
     imgPath = []
+    for i in range(len(imgOldList)):
+        imgPath.append(imgOldList[i])
     for i in range(len(imgList)):
         fname = os.path.join(settings.MEDIA_ROOT, imgList[i].name)
         furl = settings.MEDIA_URL+imgList[i].name
@@ -140,5 +166,5 @@ def updateData(request, labelName, venueName, itemName):
     data['imgList'] = imgPath
     data['videoList'] = []
     data_collection = db.data
-    data_collection.update_one({{"label":labelName, "venue":venueName, "item.name":itemName}},data)
+    data_collection.update_one({"label":labelName, "venue":venueName, "item.name":itemName},{"$set":data})
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})

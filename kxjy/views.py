@@ -1,11 +1,12 @@
-import json
-from bson import json_util
 import time
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+
+from bson import json_util
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
+
+from common.auth import cookie_auth
+from common.status import StatusCode
 from common.utils import md5
-from common.auth import salt, cookie_auth
-from kxjy.status import StatusCode
 from .settings import db
 
 

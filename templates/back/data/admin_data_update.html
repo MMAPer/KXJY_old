@@ -44,9 +44,29 @@
             <div class="row">
                  <div class="col-md-2"></div>
                  <div class="img_upload col-md-8" >
+                    <label class="col-sm-2 control-label" style="margin-left:-100px">照片展示</label>
+                    <div class="upload">
+                        <div class="upload_warp" style="border: 1px solid white;">
+                            <div class="upload_warp_img" v-show="imgOldList.length!=0" >
+                                <div class="upload_warp_img_div" style="float:left;margin-right:10px" v-for="(item,index) of imgOldList" >
+                                    <div class="upload_warp_img_div_top" >
+                                        <!-- db.data.updateOne({"item.name":"计算机是如何工作的"}, {"$set":{"imgList":["/media/1.jpg"]}}); -->
+                                        <img src="{% static 'imgs/del.png' %}" class="upload_warp_img_div_del" @click="fileOldDel(index)">
+                                    </div>
+                                    <img :src="item" style="width:200px;height:150px">
+                                </div>
+                            </div>
+                        </div>
+                        <input @change="fileChange($event)" name="imgList" type="file" id="upload_file" multiple style="display: none"/>
+                    </div>
+                 </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+                 <div class="col-md-2"></div>
+                 <div class="img_upload col-md-8" >
                     <div class="upload">
                         <div class="upload_warp_left" @click="fileClick" >
-                            <button class="btn btn-success">选择图片</button>
+                            <button class="btn btn-success">添加图片</button>
                         </div>
                         <div class="upload_warp_text">
                             选中[[imgList.length]]张文件，共[[bytesToSize(this.size)]];
@@ -97,6 +117,7 @@ let admin_data_update = new Vue({
             menu_venue_label_active: false,
             menu_venue_item_active: false,
             data: "",
+            imgOldList: [],
             imgList: [],
             size: 0,
             table: "",
@@ -127,6 +148,9 @@ let admin_data_update = new Vue({
                     file
                 });
             }
+        },
+        fileOldDel(index){
+            this.imgOldList.splice(index, 1);
         },
         fileDel(index){
             this.size = this.size - this.imgList[index].file.size;//总大小
@@ -162,6 +186,7 @@ let admin_data_update = new Vue({
                 }
                 data_obj.append("label", this.data.label);
                 data_obj.append("venue", this.data.venue);
+                data_obj.append("imgOldList", JSON.stringify(this.imgOldList));
                 data_obj.append("videoList", []);
 {#                data_obj = {#}
 {#                    label: this.selectLabelName,#}
@@ -176,19 +201,21 @@ let admin_data_update = new Vue({
                 data_obj.append("item", JSON.stringify(data_obj_item));
                 $('#submitData').prop('disabled', true);
                $.ajax({
-                   url:"/data/updata/{{ label }}/{{ venue }}/{{ item }}",
+                   url:"/data/update/{{ label }}/{{ venue }}/{{ item }}",
                    type: "post",
                    data: data_obj,
                    cache: false,
                    processData: false,   // 告诉jQuery不要处理数据
                    contentType: false,   // 告诉jQuery不要设置类型
                    success: (response)=>{
-                        $('#submitData').prop('false', false);
+                        $('#submitData').prop('disabled', false);
                         swal("信息提示", "上传成功！", "success");
-                        this.imgList = [];
-                        this.table.forEach((table_item, index)=>{
-                            table_item.value = "";
-                        });
+{#                        this.imgOldList = [];#}
+{#                        this.imgList = [];#}
+{#                        this.table.forEach((table_item, index)=>{#}
+{#                            table_item.value = "";#}
+{#                        });#}
+                       window.history.go(-1);
                    }
                })
 
@@ -218,7 +245,7 @@ let admin_data_update = new Vue({
         then(axios.spread((table_response,data_response)=>{
             this.table = table_response.data.data.table;
             this.data = data_response.data.data;
-{#            this.imgList = this.data.imgList;#}
+            this.imgOldList = this.data.imgList;
             this.table.forEach((table_item, index)=>{
                table_item.value = this.data.item[table_item.remark];
             });

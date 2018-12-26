@@ -1,18 +1,13 @@
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.shortcuts import render, reverse
-from kxjy.settings import db
-import json
 from bson import json_util
-from common.auth import cookie_auth
+from django.http import JsonResponse
 
+from common.auth import cookie_auth,permission_auth
 # Create your views here.
 # 视图函数的第一个参数必须是request，这个参数绝对不能少
 # 视图函数返回值必须是'django.http.response.HttpResponseBase'的子类的对象
-
-
 #  获取目前全部场馆类别信息（二级目录）
-from kxjy.status import StatusCode
+from common.status import StatusCode
+from kxjy.settings import db
 
 
 @cookie_auth
@@ -25,6 +20,7 @@ def getVenues(request):
 
 
 #  获取一级目录
+@cookie_auth
 def getVenuesLabel(request):
     res = {}
     venue_collection = db.venue
@@ -34,6 +30,7 @@ def getVenuesLabel(request):
 
 
 #  获取指定一级目录下的二级目录
+@cookie_auth
 def getVenuesByLabel(request, label_name):
     print(label_name)
     res = {}
@@ -44,6 +41,8 @@ def getVenuesByLabel(request, label_name):
 
 
 #  添加一级目录
+@cookie_auth
+@permission_auth
 def addLabel(request):
     res = StatusCode.OK()
     labelName = request.POST.get("label")
@@ -53,6 +52,8 @@ def addLabel(request):
 
 
 #  修改一级目录名称
+@cookie_auth
+@permission_auth
 def modifyLabel(request, originLabelName, labelName):
     res = StatusCode.OK()
     venue_collection = db.venue
@@ -61,6 +62,8 @@ def modifyLabel(request, originLabelName, labelName):
 
 
 #  删除一级目录（逻辑删除，设定status=0，不做物理删除）
+@cookie_auth
+@permission_auth
 def delLabel(request, labelName):
     res = StatusCode.OK()
     venue_collection = db.venue
@@ -69,6 +72,8 @@ def delLabel(request, labelName):
 
 
 #  向指定一级目录中添加二级目录
+@cookie_auth
+@permission_auth
 def addVenueByLabel(request):
     res = StatusCode.OK()
     labelName = request.POST.get("label")
@@ -79,6 +84,8 @@ def addVenueByLabel(request):
 
 
 #  删除指定一级目录下的二级目录
+@cookie_auth
+@permission_auth
 def delVenue(request, labelName, venueName):
     res = StatusCode.OK()
     venue_collection = db.venue
@@ -87,6 +94,8 @@ def delVenue(request, labelName, venueName):
 
 
 # 修改指定一级目录下的二级目录
+@cookie_auth
+@permission_auth
 def modifyVenue(request, labelName, originVenueName, venueName):
     res = StatusCode.OK()
     venue_collection = db.venue

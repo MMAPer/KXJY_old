@@ -17,5 +17,5 @@ urlpatterns = [
 
     path('venue/add/', views.addVenueByLabel),  # 指定数据类别下的添加场馆
     path('venue/delete/<labelName>/<venueName>', views.delVenue),  # 删除指定类别下的指定场馆
-    path('venue/modify/<labelName>/<originVenueName>/<venueName>', views.modifyVenue),  # 删除指定类别下的指定场馆
+    path('venue/modify/<labelName>/<originVenueName>/<venueName>', views.modifyVenue),  # 更新指定类别下的指定场馆
 ]
