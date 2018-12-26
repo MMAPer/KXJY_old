@@ -47,7 +47,8 @@ def logout(request):
 @cookie_auth
 def back_data(request):
     context = {}
-    context["username"] = request.COOKIES.get("username")
+    username = request.COOKIES.get("username")
+    context["username"] = username
     return render(request, 'back/data/admin_data.html', context)
 
 

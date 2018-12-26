@@ -14,7 +14,6 @@ from kxjy.settings import db
 # Create your views here.
 
 # 获取所有数据
-@cookie_auth
 def getDatas(request):
     res = StatusCode.OK()
     data_collection = db.data
@@ -24,7 +23,6 @@ def getDatas(request):
 
 
 # 获取指定类别下面的展品数据
-@cookie_auth
 def getDataByLabel(request, labelName):
     res = StatusCode.OK()
     data_collection = db.data
@@ -34,7 +32,6 @@ def getDataByLabel(request, labelName):
 
 
 # 获取指定类别指定场馆下面的展品数据
-@cookie_auth
 def getDataByLabelAndName(request, labelName, venueName):
     res = StatusCode.OK()
     data_collection = db.data
@@ -44,11 +41,10 @@ def getDataByLabelAndName(request, labelName, venueName):
 
 
 # 搜索数据（参数：展馆名称，展品名称）
-@cookie_auth
-def searchData(request, venueName, itemName):
+def searchData(request):
     res = StatusCode.OK()
-    # venueName = request.GET.get("venue")  # 展馆名称
-    # itemName = request.GET.get("item")  # 展品名称
+    venueName = request.GET.get("venue")  # 展馆名称
+    itemName = request.GET.get("item")  # 展品名称
     data_collection = db.data
     datas = list(data_collection.find({"venue": {"$regex": venueName}, "item.name": {"$regex": itemName}}))
     res['length'] = len(datas)
@@ -57,7 +53,6 @@ def searchData(request, venueName, itemName):
 
 
 #  渲染数据详情页
-@cookie_auth
 def getDetailHtml(request, labelName, venueName, itemName):
     context = {}
     context['label'] = labelName
@@ -67,7 +62,6 @@ def getDetailHtml(request, labelName, venueName, itemName):
 
 
 #  获取数据详情
-@cookie_auth
 def getDetailData(request, labelName, venueName, itemName):
     res = StatusCode.OK()
     data_collection = db.data
@@ -76,8 +70,6 @@ def getDetailData(request, labelName, venueName, itemName):
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 
-@cookie_auth
-@permission_auth
 def deleteData(request, labelName, venueName, itemName):
     res = StatusCode.OK()
     data_collection = db.data
@@ -85,13 +77,10 @@ def deleteData(request, labelName, venueName, itemName):
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 #  渲染添加数据页面
-@cookie_auth
 def getAddDataHtml(request):
     return render(request, 'back/data/admin_data_add.html')
 
 
-@cookie_auth
-@permission_auth
 def addData(request):
     res = StatusCode.OK()
     data = {}
@@ -124,7 +113,6 @@ def addData(request):
 
 
 # 渲染数据修改页面
-@cookie_auth
 def getUpdateDataHtml(request, labelName, venueName, itemName):
     context = {}
     context['label'] = labelName
@@ -133,8 +121,6 @@ def getUpdateDataHtml(request, labelName, venueName, itemName):
     return render(request, 'back/data/admin_data_update.html', context)
 
 
-@cookie_auth
-@permission_auth
 def updateData(request, labelName, venueName, itemName):
     res = StatusCode.OK()
     data = {}

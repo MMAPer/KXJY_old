@@ -173,7 +173,7 @@ let admin_data = new Vue({
     },
     methods: {
         searchData(){
-            axios.get('/data/search/'+this.selectVenueName+'/'+this.itemName).then(response=>{
+            axios.get('/data/search?venue='+this.selectVenueName+'&item='+this.itemName).then(response=>{
                 data = response.data;
                 if(data.length!=0)
                 {

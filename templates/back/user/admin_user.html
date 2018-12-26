@@ -245,6 +245,7 @@
             modifyUser(user){
                 this.modify_origin_userName = user.username;
                 this.modify_user = user;
+                this.modify_user.password = hex_md5(this.modify_user.password);
                 $('#modify').modal();
             },
             modifySubmit(modify_origin_userName, user){

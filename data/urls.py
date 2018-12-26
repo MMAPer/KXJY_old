@@ -8,9 +8,9 @@ app_name = 'data'
 #  数据层级：label->venue->item
 urlpatterns = [
     path('', views.getDatas, name='index'),
-    path('<labelName>/', views.getDataByLabel),
+    # path('<labelName>/', views.getDataByLabel),
     path('<labelName>/<venueName>/', views.getDataByLabelAndName),
-    path('search/<venueName>/<itemName>/', views.searchData),
+    path('search', views.searchData),
     path('detail/html/<labelName>/<venueName>/<itemName>', views.getDetailHtml),
     path('detail/<labelName>/<venueName>/<itemName>', views.getDetailData),
     path('delete/<labelName>/<venueName>/<itemName>', views.deleteData),

@@ -9,7 +9,6 @@ from kxjy.settings import db
 from common.auth import cookie_auth, permission_auth
 
 
-@cookie_auth
 def getUsers(request):
     res = StatusCode.OK()
     user_collection = db.user
@@ -18,8 +17,6 @@ def getUsers(request):
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 
-@cookie_auth
-@permission_auth
 def addUser(request):
     res = StatusCode.OK()
     user = request.POST.get("user")
@@ -29,8 +26,6 @@ def addUser(request):
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 
-@cookie_auth
-@permission_auth
 def deleteUser(request, username):
     res = StatusCode.OK()
     user_collection = db.user
@@ -38,8 +33,6 @@ def deleteUser(request, username):
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
 
 
-@cookie_auth
-@permission_auth
 def updateUser(request, username):
     res = StatusCode.OK()
     user = request.POST.get("user")
