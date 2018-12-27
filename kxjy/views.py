@@ -68,7 +68,14 @@ def back_venue(request):
 @cookie_auth
 def back_user(request):
     context = {}
-    context["username"] = request.COOKIES.get("username")
+    username = request.COOKIES.get("username")
+    context["username"] = username
+    user_collection = db.user
+    user = user_collection.find_one({'username': username})
+    if user['role'] != '管理员':
+        result = StatusCode.ACCESSERROR()
+        response = JsonResponse(result, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
+        return response
     return render(request, 'back/user/admin_user.html', context)
 
 

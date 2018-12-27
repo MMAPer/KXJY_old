@@ -150,7 +150,20 @@ let admin_data_update = new Vue({
             }
         },
         fileOldDel(index){
-            this.imgOldList.splice(index, 1);
+            swal({
+                title: "操作提示",
+                text: "确定删除该张照片吗？",
+                type: "warning",
+                showCancelButton: true,
+                confimButtonColor: "#DD6B55",
+                cancelButtonText: "取消",
+                confirmButtonText: "是的，确定删除！",
+                closeOnConfirm: true
+            }).then((isConfirm) => {
+                if(isConfirm){
+                    this.imgOldList.splice(index, 1);
+                }
+            });
         },
         fileDel(index){
             this.size = this.size - this.imgList[index].file.size;//总大小
