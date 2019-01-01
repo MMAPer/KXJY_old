@@ -82,8 +82,9 @@ DATABASES = {
 }
 
 from pymongo import MongoClient
+# client = MongoClient("mongodb://hbstm:hbstm123456@127.0.0.1:27017")
 client = MongoClient("mongodb://serp:serp123456@127.0.0.1:27017")
-db = client.serp
+db = client.kxjy
 
 
 # Password validation

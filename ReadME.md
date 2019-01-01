@@ -9,13 +9,14 @@ Linxu系统中使用：pip install virtualenvwrapper
 比起conda，环境更纯净、简洁
 + 使用：
     - （1）配置WORKON_HOME环境变量，指定虚拟环境存储目录
+    例如D:/Envs
     - （2）创建虚拟环境：
-    mkvirtualenv -p D:\Anaconda3\envs\python36\python.exe kjjy
+    mkvirtualenv -p D:\Anaconda3\envs\python36\python.exe kxjy
     - （3）查看已安装的虚拟环境：
     lsvirtualenv
-    - （4）启动虚拟环境：workon kjjy
+    - （4）启动虚拟环境：workon kxjy
     - （5）退出虚拟环境：deactivate
-    - （6）删除虚拟环境：rmvirtualenv kjjy
+    - （6）删除虚拟环境：rmvirtualenv kxjy
 
 ## Django环境——Django2.0
 + （1）切换环境：workon kjjy

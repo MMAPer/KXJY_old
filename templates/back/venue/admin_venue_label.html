@@ -167,7 +167,7 @@
                 $('#modify').modal();
             },
             modifySubmit(originLabel, label){
-                axios.delete("/user/update/" + username).then(response => {
+                axios.delete("/venue/label/modify/" + this.modify_origin_labelName+"/"+this.modify_labelName).then(response => {
                     res = response.data;
                     if (res.code == 20000) {
                         window.location.reload();

@@ -16,22 +16,24 @@ def login(request):
         result = {}
         username = request.POST.get("username")
         password = md5(request.POST.get("password"))
-        print(password)
         user_collection = db.user
         user = user_collection.find_one({'username': username, 'password': password})
-        if user['role']=='普通用户':
-            result = StatusCode.ACCESSERROR()
-            response = JsonResponse(result, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
-            return response
         if user:
+            if user['role'] == '普通用户':
+                result = StatusCode.ACCESSERROR()
+                response = JsonResponse(result, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
+                return response
             token = md5(username + str(time.time()))
             user['token'] = token
             user_collection.update({'username': username, 'password': password}, user)
-            result['code'] = 20000
-            result['msg'] = '登录成功'
+            result = StatusCode.OK()
             response = JsonResponse(result, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
             response.set_cookie("username", username, expires=60 * 60 * 2)
             response.set_cookie("token", token, expires=60 * 60 * 2)
+            return response
+        else:
+            result = StatusCode.LOGINERROR()
+            response = JsonResponse(result, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})
             return response
     return render(request, 'login.html')  # 跳转到登录页面
 

@@ -38,5 +38,5 @@ def updateUser(request, username):
     user = request.POST.get("user")
     user = json.loads(user)
     user_collection = db.user
-    user_collection.update_one({"username": username}, user)
+    user_collection.update_one({"username": username}, {"$set": user})
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})

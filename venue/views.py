@@ -85,5 +85,5 @@ def modifyVenue(request, labelName, originVenueName, venueName):
     res = StatusCode.OK()
     venue_collection = db.venue
     venue_collection.update_one({"label": labelName}, {"$pull": {"venues": originVenueName}})
-    venue_collection.update_one({"label": labelName}, {"$pull": {"venues": venueName}})
+    venue_collection.update_one({"label": labelName}, {"$push": {"venues": venueName}})
     return JsonResponse(res, json_dumps_params={'default': json_util.default, 'ensure_ascii': False})

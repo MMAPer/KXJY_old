@@ -9,7 +9,7 @@ obj1={
 	
 obj2={
 	"label":"2018专业馆",
-	"venues":["北京自然博物馆-植物科技馆", "中国地质博物馆","上海科技馆-地质科技馆","上海科技馆-综合科技馆","上海自然博物馆-地质科技馆","上海自然博物馆-综合科技馆"],
+	"venues":["北京自然博物馆", "中国地质博物馆","上海科技馆","上海自然博物馆"],
 				"status": 1
 };
 
@@ -131,12 +131,12 @@ table1 = {"label":"科技馆展品", "table":[
 table2 = {"label":"2018专业馆", "table":[
                 {"name":"展品名称", "remark":"name"},
                 {"name":"基本内容", "remark":"content"},{"name":"展厅名称", "remark":"room"},
-                {"name":"展示技术", "remark":"style_design"},{"name":"展品选用原则-教育性", "remark":"selection_principle*educative_nature"},
-                {"name":"展品选用原则-科学性", "remark":"selection_principle*science_nature"},{"name":"展品选用原则-趣味性", "remark":"selection_principle*interesting_nature"},
-                {"name":"展品选用原则-艺术性", "remark":"selection_principle*artistry_nature"},{"name":"展品选用原则-参与性", "remark":"selection_principle*participative_nature"},
-                {"name":"展品选用原则-操作简单", "remark":"selection_principle*operation_nature"},{"name":"文字说明撰写原则-主题突出", "remark":"writing_principle*topic_prominence"},
-                {"name":"文字说明撰写原则-观点明确", "remark":"writing_principle*clear_standpoint"},{"name":"文字说明撰写原则-风格鲜明", "remark":"writing_principle*style_distinctive"},
-				{"name":"文字说明撰写规范", "remark":"writing_principle*clear_standpoint"},
+                {"name":"展示技术", "remark":"style_design"},{"name":"展品选用原则-教育性", "remark":"selection_principle.educative_nature"},
+                {"name":"展品选用原则-科学性", "remark":"selection_principle.science_nature"},{"name":"展品选用原则-趣味性", "remark":"selection_principle.interesting_nature"},
+                {"name":"展品选用原则-艺术性", "remark":"selection_principle.artistry_nature"},{"name":"展品选用原则-参与性", "remark":"selection_principle.participative_nature"},
+                {"name":"展品选用原则-操作简单", "remark":"selection_principle.operation_nature"},{"name":"文字说明撰写原则-主题突出", "remark":"writing_principle.topic_prominence"},
+                {"name":"文字说明撰写原则-观点明确", "remark":"writing_principle.clear_standpoint"},{"name":"文字说明撰写原则-风格鲜明", "remark":"writing_principle.style_distinctive"},
+				{"name":"文字说明撰写规范", "remark":"writing_principle.clear_standpoint"},
 				{"name":"数字媒体", "remark":"digital_media"},{"name":"展陈设计主要形式", "remark":"exhibit_style"},
                 {"name":"科学知识", "remark":"science_knowledge"},{"name":"展陈内容选择", "remark":"exhibit_content"}
             ]};
@@ -144,12 +144,12 @@ table2 = {"label":"2018专业馆", "table":[
 table3 = {"label":"2018综合馆", "table":[
                 {"name":"展品名称", "remark":"name"},
                 {"name":"基本内容", "remark":"content"},{"name":"展厅名称", "remark":"room"},
-                {"name":"展示技术", "remark":"style_design"},{"name":"展品选用原则-教育性", "remark":"selection_principle*educative_nature"},
-                {"name":"展品选用原则-科学性", "remark":"selection_principle*science_nature"},{"name":"展品选用原则-趣味性", "remark":"selection_principle*interesting_nature"},
-                {"name":"展品选用原则-艺术性", "remark":"selection_principle*artistry_nature"},{"name":"展品选用原则-参与性", "remark":"selection_principle*participative_nature"},
-                {"name":"展品选用原则-操作简单", "remark":"selection_principle*operation_nature"},{"name":"文字说明撰写原则-主题突出", "remark":"writing_principle*topic_prominence"},
-                {"name":"文字说明撰写原则-观点明确", "remark":"writing_principle*clear_standpoint"},{"name":"文字说明撰写原则-风格鲜明", "remark":"writing_principle*style_distinctive"},
-				{"name":"文字说明撰写规范", "remark":"writing_principle*clear_standpoint"},
+                {"name":"展示技术", "remark":"style_design"},{"name":"展品选用原则-教育性", "remark":"selection_principle.educative_nature"},
+                {"name":"展品选用原则-科学性", "remark":"selection_principle.science_nature"},{"name":"展品选用原则-趣味性", "remark":"selection_principle.interesting_nature"},
+                {"name":"展品选用原则-艺术性", "remark":"selection_principle.artistry_nature"},{"name":"展品选用原则-参与性", "remark":"selection_principle.participative_nature"},
+                {"name":"展品选用原则-操作简单", "remark":"selection_principle.operation_nature"},{"name":"文字说明撰写原则-主题突出", "remark":"writing_principle.topic_prominence"},
+                {"name":"文字说明撰写原则-观点明确", "remark":"writing_principle.clear_standpoint"},{"name":"文字说明撰写原则-风格鲜明", "remark":"writing_principle.style_distinctive"},
+				{"name":"文字说明撰写规范", "remark":"writing_principle.clear_standpoint"},
 				{"name":"数字媒体", "remark":"digital_media"},{"name":"展陈设计主要形式", "remark":"exhibit_style"},
                 {"name":"科学知识", "remark":"science_knowledge"},{"name":"展陈内容选择", "remark":"exhibit_content"}
             ]};

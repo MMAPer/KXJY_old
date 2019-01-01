@@ -1,0 +1,49 @@
+1、系统环境：Windows Server 2008 R2；Python3.6；Django2
+
+2、Windows提供web服务常规方式：
+Windows自带的Web服务器软件->IIS
+Web服务器软件和应用程序的通讯规范采用FastCGI->wfastcgi
+
+3、使用IIS和wfastcgi部署
+1）首先确保Python和对应所需的环境和库已经安装好
+2）启用IIS，选上CGI：服务器管理器->添加角色->Web服务器IIS->在应用程序开发部分勾选CGI
+3）放置项目，以及安装wfastcgi：
+因为权限问题，把网站代码和虚拟环境放置到C:/inetpub/wwwroot；
+在系统Python环境下安装wfastcgi：pip install wfastcgi
+4）复制wfastcgi到项目目录（IIS权限需要）：在python安装目录的Lib目录下->site-packages->wfastcgi.py
+5）配置FastCGI映射：点击IIS管理器中的网站->处理映射程序->添加模块映射->
+请求路径填写*->模块选择FastCgiModule->可执行文件填写：C:\inetpub\wwwroot\django_project\test_env\Scripts\python.exe|C:\inetpub/wwwroot\django_project\test_project\wfastcgi.py->名称填写为DjangoHandler
+6）配置FastCGI参数
+在项目根目录创建web.config文件
+<configuration>
+	<!--
+  <system.webServer>
+    <handlers>
+      <add name="Python FastCGI"
+           path="*"
+           verb="*"
+           modules="FastCgiModule"
+           scriptProcessor="C:\Python36\python.exe|C:\Python36\Lib\site-packages\wfastcgi.py"
+           resourceType="Unspecified"
+           requireAccess="Script" />
+    </handlers>
+  </system.webServer> -->
+
+  <appSettings>
+    <!-- Required settings -->
+    <add key="WSGI_HANDLER" value="django.core.wsgi.get_wsgi_application()" />
+    <add key="PYTHONPATH" value="C:\MyApp" />
+
+    <!-- Optional settings -->
+    <add key="WSGI_LOG" value="C:\Logs\my_app.log" />
+    <add key="WSGI_RESTART_FILE_REGEX" value=".*((\.py)|(\.config))$" />
+    <add key="APPINSIGHTS_INSTRUMENTATIONKEY" value="__instrumentation_key__" />
+    <add key="DJANGO_SETTINGS_MODULE" value="my_app.settings" />
+    <add key="WSGI_PTVSD_SECRET" value="__secret_code__" />
+    <add key="WSGI_PTVSD_ADDRESS" value="ipaddress:port" />
+  </appSettings>
+</configuration>
+7）给需要写入的文件添加写入权限
+8）设置静态目录
+
+wfastcgi文档：https://pypi.org/project/wfastcgi/

@@ -1,313 +1,352 @@
 {% extends 'back/admin_base.html' %}
 {% load staticfiles %}
 
-    {% block extra_script %}
-        <script src="{% static 'plugins/md5/md5.js' %}"></script>
-        <script src="{% static 'plugins/sweetalert/sweetalert2.min.js' %}"></script>
-    {% endblock %}
+{% block extra_script %}
+    <script src="{% static 'plugins/md5/md5.js' %}"></script>
+    <script src="{% static 'plugins/sweetalert/sweetalert2.min.js' %}"></script>
+{% endblock %}
 
-    {% block extra_css  %}
-        <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert/sweetalert2.min.css' %}">
-    {% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/sweetalert/sweetalert2.min.css' %}">
+{% endblock %}
 
-    {%block div_id %}admin_user{% endblock %}
+{% block div_id %}admin_user{% endblock %}
 
 
-    {% block content %}
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <h1>
-                用户管理
-                <small>
-                    <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px" @click="addUser">
-                        {#                    <span class="glyphicon glyphicon-ok">&nbsp;</span>#}
-                        添加用户
-                    </button>
-                </small>
-            </h1>
-        </section>
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            用户管理
+            <small>
+                <button class="btn btn-primary" style="margin-left:50px; margin-top:-10px" @click="addUser">
+                    {#                    <span class="glyphicon glyphicon-ok">&nbsp;</span>#}
+                    添加用户
+                </button>
+            </small>
+        </h1>
+    </section>
 
-        <!-- Main content -->
-        <section class="content container-fluid">
-            <div>
-                <div class="row">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-8">
-                        <div class="box box-info">
-                            <div class="box-header with-border">
-                                <h3 class="box-title" id="table-title">用户管理</h3>
-                            </div>
-                            <div class="box-body">
-                                <div class="table-responsive">
-                                    <table class="table no-margin table-bordered"
-                                           style="word-break:break-all; word-wrap:break-all;table-layout:fixed;">
-                                        <thead align="center">
-                                            <tr>
-                                                <th style="width: 10%;">序号</th>
-                                                <th>用户名</th><th>角色</th>
-                                                <th style="width:200px; text-align:center;">操作</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="text-center" v-for="user,index in users">
-                                                <td><span>[[ index+1 ]]</span></td>
-                                                <td><span>[[ user.username ]]</span></td>
-                                                <td><span>[[ user.role ]]</span></td>
-                                                <td><button class="btn btn-primary" style="margin-right: 10px;" @click="modifyUser(user)">修改</button>
-                                                    <button class="btn btn-danger" @click="deleteUser(user.username)">删除</button></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" id="table-title">用户管理</h3>
+                        </div>
+                        <div class="box-body">
+                            <div class="table-responsive">
+                                <table class="table no-margin table-bordered"
+                                       style="word-break:break-all; word-wrap:break-all;table-layout:fixed;">
+                                    <thead align="center">
+                                    <tr>
+                                        <th style="width: 10%;">序号</th>
+                                        <th>用户名</th>
+                                        <th>角色</th>
+                                        <th style="width:200px; text-align:center;">操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="text-center" v-for="user,index in users">
+                                        <td><span>[[ index+1 ]]</span></td>
+                                        <td><span>[[ user.username ]]</span></td>
+                                        <td><span>[[ user.role ]]</span></td>
+                                        <td>
+                                            <button class="btn btn-primary" style="margin-right: 10px;"
+                                                    @click="modifyUser(user)">修改
+                                            </button>
+                                            <button class="btn btn-danger" @click="deleteUser(user.username)">删除
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    <!--------------------------
-                      | Your Page Content Here |
-                      -------------------------->
                 </div>
-                <div class="pager" id="pager" >
-                    <span class="btn btn-default" @click="showPage(1)">首页</span>
-                    <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent-1)">上一页</span>
-                    <span class="form-inline">
-                    <input class="form-control" style="width:60px;text-align:center" type="text" v-model="pagerData.page.pageCurrent" @keyup.enter="showPage(pagerData.page.pageCurrent)" />
+                <!--------------------------
+                  | Your Page Content Here |
+                  -------------------------->
+            </div>
+            <div class="pager" id="pager">
+                <span class="btn btn-default" @click="showPage(1)">首页</span>
+                <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent-1)">上一页</span>
+                <span class="form-inline">
+                    <input class="form-control" style="width:60px;text-align:center" type="text"
+                           v-model="pagerData.page.pageCurrent" @keyup.enter="showPage(pagerData.page.pageCurrent)"/>
                     </span>
-                    <span>共[[pagerData.page.pageCount]]页</span>
-                    <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent+1)">下一页</span>
-                    <span class="btn btn-default" @click="showPage(pagerData.page.pageCount)">尾页</span>
-                    <span>共[[pagerData.page.totalCount]]条数据，当前显示第[[startData]]-[[endData]]条记录</span>
+                <span>共[[pagerData.page.pageCount]]页</span>
+                <span class="btn btn-default" @click="showPage(pagerData.page.pageCurrent+1)">下一页</span>
+                <span class="btn btn-default" @click="showPage(pagerData.page.pageCount)">尾页</span>
+                <span>共[[pagerData.page.totalCount]]条数据，当前显示第[[startData]]-[[endData]]条记录</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-labelledby="modifyUser">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="modifyUser">修改用户信息</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="modify_userName">用户名</label>
+                        <input type="text" name="modify_userName" class="form-control" id="modify_userName"
+                               v-model="modify_user.username" placeholder="请输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="modify_password">密码</label>
+                        <input type="password" name="modify_password" class="form-control" id="modify_password"
+                               v-model="modify_user.password" placeholder="请输入密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="modify_role">用户角色</label>
+                        <select id="modify_role" v-model="modify_user.role">
+                            <option v-for="role in roles" :value="role">[[ role ]]</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-        </section>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                </button>
+                <button type="button" id="modify_submit" @click="modifySubmit(modify_origin_userName,modify_user)"
+                        class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk"
+                                                                           aria-hidden="true"></span>确认修改
+                </button>
+            </div>
+        </div>
+    </div>
 
-        <div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-labelledby="modifyUser">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="modifyUser">修改用户信息</h4>
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="addUser">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addUser">添加用户</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="add_userName">用户名</label>
+                        <input type="text" name="modify_userName" class="form-control" id="add_userName"
+                               v-model="add_user.username" placeholder="请输入用户名">
                     </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="modify_userName">用户名</label>
-                            <input type="text" name="modify_userName" class="form-control" id="modify_userName" v-model="modify_user.username"  placeholder="请输入用户名">
-                        </div>
-                        <div class="form-group">
-                            <label for="modify_password">密码</label>
-                            <input type="password" name="modify_password" class="form-control" id="modify_password" v-model="modify_user.password" placeholder="请输入密码">
-                        </div>
-                        <div class="form-group">
-                            <label for="modify_role">用户角色</label>
-                            <select id="modify_role" v-model="modify_user.role">
-                                <option  v-for="role in roles" :value="role">[[ role ]]</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label for="add_password">密码</label>
+                        <input type="text" name="modify_password" class="form-control" id="add_password"
+                               v-model="add_user.password" placeholder="请输入密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="add_role">用户角色</label>
+                        <select id="add_role" v-model="add_user.role">
+                            <option v-for="role in roles" :value="role">[[ role ]]</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
-                    <button type="button" id="modify_submit" @click="modifySubmit(modify_origin_userName,modify_user)" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认修改</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                            class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                    </button>
+                    <button type="button" id="add_submit" @click="addSubmit()" class="btn btn-primary"
+                            data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk"
+                                                       aria-hidden="true"></span>确认添加
+                    </button>
                 </div>
             </div>
         </div>
-
-        <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="addUser">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="addUser">添加用户</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="add_userName">用户名</label>
-                            <input type="text" name="modify_userName" class="form-control" id="add_userName" v-model="add_user.username" placeholder="请输入用户名">
-                        </div>
-                        <div class="form-group">
-                            <label for="add_password">密码</label>
-                            <input type="text" name="modify_password" class="form-control" id="add_password" v-model="add_user.password" placeholder="请输入密码">
-                        </div>
-                        <div class="form-group">
-                            <label for="add_role">用户角色</label>
-                            <select id="add_role" v-model="add_user.role">
-                                <option  v-for="role in roles" :value="role">[[ role ]]</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭</button>
-                        <button type="button" id="add_submit" @click="addSubmit()" class="btn btn-primary" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确认添加</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /.content -->
-    {% endblock %}
+    </div>
+    <!-- /.content -->
+{% endblock %}
 
 
 {% block end_script %}
-<script>
-    let admin_user = new Vue({
-        el:"#admin_user",
-        delimiters: ["[[", "]]"],
-        data(){
-            return {
-                menu_search_active: false,
-                menu_data_active: false,
-                menu_venue_active: false,
-                menu_user_active: true,
-                menu_venue_label_active: false,
-                menu_venue_item_active: false,
-                users: [],
-                roles:["管理员", "数据录入员", "普通用户"],
-                pagerData: {
-                    data: [],
-                    page: {
+    <script>
+        let admin_user = new Vue({
+            el: "#admin_user",
+            delimiters: ["[[", "]]"],
+            data(){
+                return {
+                    menu_search_active: false,
+                    menu_data_active: false,
+                    menu_venue_active: false,
+                    menu_user_active: true,
+                    menu_venue_label_active: false,
+                    menu_venue_item_active: false,
+                    users: [],
+                    roles: ["管理员", "数据录入员", "普通用户"],
+                    pagerData: {
+                        data: [],
+                        page: {
+                            arrPageSize: [10, 20, 30],
+                            pageSize: 10,
+                            pageCount: 1,
+                            pageCurrent: 1,
+                            totalCount: 1
+                        }
+                    },
+                    sortparam: "",
+                    sorttype: 1,
+                    add_user: {"username": "", "password": "", "role": "管理员"},
+                    modify_origin_userName: "",
+                    modify_user: {"username": "", "password": "", "role": ""},
+                }
+            },
+            mounted(){
+                axios.get("/user").then(response => {
+                    data = response.data.data;
+                    this.users = data;
+                    this.pagerData.page = {
                         arrPageSize: [10, 20, 30],
                         pageSize: 10,
                         pageCount: 1,
                         pageCurrent: 1,
                         totalCount: 1
-                    }
+                    };
+                    this.pagerData.page.totalCount = this.users.length;
+                    this.getPageData(this.pagerData.page);
+                })
+            },
+            methods: {
+                addUser(){
+                    $('#add').modal();
                 },
-                sortparam: "",
-                sorttype: 1,
-                add_user: {"username":"", "password":"", "role":"管理员"},
-                modify_origin_userName: "",
-                modify_user: {"username":"", "password":"", "role":""},
-            }
-        },
-        mounted(){
-            axios.get("/user").then(response=>{
-                data = response.data.data;
-                this.users = data;
-                this.pagerData.page = {
-                    arrPageSize: [10, 20, 30],
-                    pageSize: 10,
-                    pageCount: 1,
-                    pageCurrent: 1,
-                    totalCount: 1
-                };
-                this.pagerData.page.totalCount = this.users.length;
-                this.getPageData(this.pagerData.page);
-            })
-        },
-        methods:{
-            addUser(){
-                $('#add').modal();
-            },
-            addSubmit(){
-                this.add_user.password = hex_md5(this.add_user.password);
-                axios({
-                       url: "/user/add/",
-                       method: "POST",
-                       data: {
-                           "user":JSON.stringify(this.add_user),
-                       },
-                       transformRequest: [function (data) {
-                           let ret = '';
-                           for (let it in data) {
-                               ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
-                           }
-                           return ret;
-                       }]}).then(response => {
-                    res = response.data;
-                    if (res.code == 20000) {
-                        window.location.reload();
-                    } else if (res.code == 20003) {
-                        alert("您没有操作权限");
-                    }
-                });
-            },
-            deleteUser(username){
-                swal({
-                    title: "操作提示",
-                    text: "确定删除该用户吗？",
-                    type: "warning",
-                    showCancelButton: true,
-                    confimButtonColor: "#DD6B55",
-                    cancelButtonText: "取消",
-                    confirmButtonText: "是的，确定删除！",
-                    closeOnConfirm: true
-                }).then((isConfirm) => {
-                    if(isConfirm){
-                        axios.delete("/user/delete/" + username).then(response => {
-                            res = response.data;
-                            if (res.code == 20000) {
-                                window.location.reload();
-                            } else if (res.code == 20003) {
-                                alert("您没有操作权限")
+                addSubmit(){
+                    this.add_user.password = hex_md5(this.add_user.password);
+                    axios({
+                        url: "/user/add/",
+                        method: "POST",
+                        data: {
+                            "user": JSON.stringify(this.add_user),
+                        },
+                        transformRequest: [function (data) {
+                            let ret = '';
+                            for (let it in data) {
+                                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
                             }
-                        });
-                    }
-                });
-            },
-            modifyUser(user){
-                this.modify_origin_userName = user.username;
-                this.modify_user = user;
-                this.modify_user.password = hex_md5(this.modify_user.password);
-                $('#modify').modal();
-            },
-            modifySubmit(modify_origin_userName, user){
-                axios.post("/user/update/" + modify_origin_userName).then(response => {
-                    res = response.data;
-                    if (res.code == 20000) {
-                        window.location.reload();
-                    } else if (res.code == 20003) {
-                        alert("您没有操作权限");
-                    }
-                });
-            },
-            showPage: function (pageIndex) {
-                if (pageIndex > 0) {
-                    if(pageIndex>this.pagerData.page.pageCount) pageIndex = this.page.pageCount;
-                    this.getPageData({pageCurrent:pageIndex,pageSize:this.pageSize});//事件
-                }
+                            return ret;
+                        }]
+                    }).then(response => {
+                        res = response.data;
+                        if (res.code == 20000) {
+                            window.location.reload();
+                        } else if (res.code == 20003) {
+                            alert("您没有操作权限");
+                        }
+                    });
                 },
-            sortBy: function (sortparam) {
-                        this.sortparam = sortparam;
-                        this.sorttype = this.sorttype == -1 ? 1 : -1;
-                    },
-            getPageData: function(page) {
+                deleteUser(username){
+                    swal({
+                        title: "操作提示",
+                        text: "确定删除该用户吗？",
+                        type: "warning",
+                        showCancelButton: true,
+                        confimButtonColor: "#DD6B55",
+                        cancelButtonText: "取消",
+                        confirmButtonText: "是的，确定删除！",
+                        closeOnConfirm: true
+                    }).then((isConfirm) => {
+                        if (isConfirm) {
+                            axios.delete("/user/delete/" + username).then(response => {
+                                res = response.data;
+                                if (res.code == 20000) {
+                                    window.location.reload();
+                                } else if (res.code == 20003) {
+                                    alert("您没有操作权限")
+                                }
+                            });
+                        }
+                    });
+                },
+                modifyUser(user){
+                    this.modify_origin_userName = user.username;
+                    this.modify_user.username = user.username;
+                    this.modify_user.password = user.password;
+                    this.modify_user.role = user.role;
+                    this.modify_user.password = hex_md5(this.modify_user.password);
+                    $('#modify').modal();
+                },
+                modifySubmit(modify_origin_userName, user){
+                    axios({
+                        url: "/user/update/"+modify_origin_userName,
+                        method: "POST",
+                        data: {
+                            "user": JSON.stringify(user),
+                        },
+                        transformRequest: [function (data) {
+                            let ret = '';
+                            for (let it in data) {
+                                ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&';
+                            }
+                            return ret;
+                        }]
+                    }).then(response => {
+                        res = response.data;
+                        if (res.code == 20000) {
+                            window.location.reload();
+                        } else if (res.code == 20003) {
+                            alert("您没有操作权限");
+                        }
+                    });
+                },
+                showPage: function (pageIndex) {
+                    if (pageIndex > 0) {
+                        if (pageIndex > this.pagerData.page.pageCount) pageIndex = this.page.pageCount;
+                        this.getPageData({pageCurrent: pageIndex, pageSize: this.pageSize});//事件
+                    }
+                },
+                sortBy: function (sortparam) {
+                    this.sortparam = sortparam;
+                    this.sorttype = this.sorttype == -1 ? 1 : -1;
+                },
+                getPageData: function (page) {
                     this.pagerData.page.pageSize = page.pageSize;
                     this.pagerData.page.pageCurrent = page.pageCurrent;
                     this.pagerData.page.pageCount = Math.ceil(this.pagerData.page.totalCount / this.pagerData.page.pageSize);// 修改分页信息
                     let newPageInfo = [];
                     for (let i = 0; i < page.pageSize; i++) {
-                        let index =i+(page.pageCurrent-1)*page.pageSize;
-                        if(index>this.pagerData.page.totalCount-1)break;
-                            newPageInfo[newPageInfo.length] = this.users[index];
+                        let index = i + (page.pageCurrent - 1) * page.pageSize;
+                        if (index > this.pagerData.page.totalCount - 1)break;
+                        newPageInfo[newPageInfo.length] = this.users[index];
                     }
                     this.pagerData.data = newPageInfo; // 修改分页数据
-            }
-        },
-        //计算属性
-        computed:{
-            // 分页大小 获取的时候显示父级传入的，修改的时候修改自身的。子组件不能修改父元素的值
-            pageSize:{
-                get:function(){
-                    return this.pagerData.page.pageSize;
-                },
-                set:function(value){
-                    this.pagerData.page.pageSize = value;
                 }
             },
-            pageCurrent:{
-                get:function(){
-                    return this.pagerData.page.pageCurrent;
+            //计算属性
+            computed: {
+                // 分页大小 获取的时候显示父级传入的，修改的时候修改自身的。子组件不能修改父元素的值
+                pageSize: {
+                    get: function () {
+                        return this.pagerData.page.pageSize;
+                    },
+                    set: function (value) {
+                        this.pagerData.page.pageSize = value;
+                    }
                 },
-                set:function(value){
-                    this.pagerData.page.pageCurrent = value;
+                pageCurrent: {
+                    get: function () {
+                        return this.pagerData.page.pageCurrent;
+                    },
+                    set: function (value) {
+                        this.pagerData.page.pageCurrent = value;
+                    }
+                },
+                startData: function () {
+                    return this.pagerData.page.pageSize * (this.pagerData.page.pageCurrent - 1) + 1;
+                },
+                endData: function () {
+                    let max = this.pagerData.page.pageSize * this.pagerData.page.pageCurrent;
+                    return max > this.pagerData.page.totalCount ? this.pagerData.page.totalCount : max;
                 }
             },
-            startData:function(){
-                return this.pagerData.page.pageSize*(this.pagerData.page.pageCurrent-1)+1;
-            },
-            endData:function(){
-                let max =this.pagerData.page.pageSize*this.pagerData.page.pageCurrent;
-                return max>this.pagerData.page.totalCount?this.pagerData.page.totalCount:max;
-            }
-        },
-    });
-</script>
+        });
+    </script>
 {% endblock %}

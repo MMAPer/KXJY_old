@@ -108,9 +108,9 @@
                     }).then(response=>{
                         if(response.data.code==20000)
                         {
-                            window.location.href = '/back/data';
+                            window.location.href = '/back/data';  //登陆成功，转到后台
                         }else if(response.data.code==20003){
-                            alert(response.data.msg);
+                            alert("对不起，您没有相关权限");  //权限不够
                         }
                         else {
                             alert("用户名或密码错误");
